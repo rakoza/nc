@@ -15,4 +15,15 @@ class HomeController extends Controller
     {
         return view('index');
     }
+
+    /**
+     * Check if the user is authenticated
+     *
+     * @return null
+     */
+    public function check()
+    {
+        return 'cool';
+    }
+
 }

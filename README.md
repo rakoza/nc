@@ -109,7 +109,193 @@ Example config your Laravel project
     }
     ```
 
-5. Add vue router
+5. Add vue router, vuex and axios
     ``` js
     vue add router
+    vue add vuex
+    npm install axios --save
+    ```
+
+6. Add authentication routes to backend:
+    ``` php
+    Route::prefix('spa')->group(function () {
+
+        Route::post('login', 'Auth\LoginController@login');
+        Route::get('csrf-cookie', 'Auth\CsrfCookieController@show');
+        // Route::get('locale/{locale}', 'HomeController@setLocale');
+
+        /**
+         * Stranice dozvoljene za pristup samo autorizovanim korisnicima
+         */
+        Route::group(['middleware' => 'auth'], function () {
+            Route::get('check', 'HomeController@check');
+
+            require __DIR__.'/spa.php';
+        });
+    });
+    ```
+
+    Auth\LoginController.php
+    ``` php
+    <?php
+
+    namespace App\Http\Controllers\Auth;
+
+    use App\Models\User;
+    use Illuminate\Http\Request;
+    use App\Http\Controllers\Controller;
+    use Illuminate\Validation\ValidationException;
+    use Illuminate\Foundation\Auth\AuthenticatesUsers;
+
+    class LoginController extends Controller
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Login Controller
+        |--------------------------------------------------------------------------
+        |
+        | This controller handles authenticating users for the application and
+        | redirecting them to your home screen. The controller uses a trait
+        | to conveniently provide its functionality to your applications.
+        |
+        */
+
+        use AuthenticatesUsers;
+
+        /**
+         * Where to redirect users after login.
+         *
+         * @var string
+         */
+        protected $redirectTo = '/home';
+    ```
+
+    Auth\CsrfCookieController.php
+    ``` php
+    <?php
+
+    namespace App\Http\Controllers\Auth;
+
+    use Illuminate\Http\JsonResponse;
+    use Illuminate\Http\Request;
+    use Illuminate\Http\Response;
+
+    class CsrfCookieController
+    {
+        /**
+         * Return an empty response simply to trigger the storage of the CSRF cookie in the browser.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
+         */
+        public function show(Request $request)
+        {
+            if ($request->expectsJson()) {
+                return new JsonResponse(null, 204);
+            }
+
+            return new Response('', 204);
+        }
+    }
+    ```
+
+    HomeController.php `check()` method
+    ``` php
+    /**
+     * Check if the user is authenticated
+     *
+     * @return null
+     */
+    public function check()
+    {
+        return 'cool';
+    }
+    ```
+
+7. Add authentication to frontend:
+
+    main.js
+    ``` js
+    import Vue from 'vue'
+    import App from './App.vue'
+    import router from './router'
+    import store from './store'
+    import axios from 'axios'
+
+    Vue.config.productionTip = false
+
+    axios.defaults.withCredentials = true
+
+    store.dispatch('auth/me').then(() => {
+        new Vue({
+            store,
+            router,
+            render: h => h(App)
+        }).$mount('#app')
+    })
+    ```
+
+    store/auth.js
+    ``` js
+    import axios from 'axios'
+
+    export default {
+        namespaced: true,
+
+        state: {
+            authenticated: false,
+            // user: null
+        },
+
+        getters: {
+            authenticated (state) {
+                return state.authenticated
+            },
+
+            // user (state) {
+            //     return state.user
+            // },
+        },
+
+        mutations: {
+            SET_AUTHENTICATED (state, value) {
+                state.authenticated = value
+            },
+
+            // SET_USER (state, value) {
+            //     state.user = value
+            // }
+        },
+
+        actions: {
+            async signIn ({ dispatch }, credentials) {
+                await axios.get('/spa/csrf-cookie')
+                await axios.post('/spa/login', credentials)
+
+                return dispatch('me')
+            },
+
+            async signOut ({ dispatch }) {
+                await axios.post('/spa/logout')
+
+                return dispatch('me')
+            },
+
+            me ({ commit }) {
+                return axios.get('/spa/check').then((response) => {
+                    commit('SET_AUTHENTICATED', true)
+                    // commit('SET_USER', response.data)
+                }).catch(() => {
+                    commit('SET_AUTHENTICATED', false)
+                    // commit('SET_USER', null)
+                })
+            }
+        }
+    }
+    ```
+
+8. Add init user to UserSeed and run databases migrations with seed flag:
+
+    ``` sh
+    php artisan migrate --seed
     ```

@@ -8,8 +8,10 @@ Vue.config.productionTip = false
 
 axios.defaults.withCredentials = true
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+store.dispatch('auth/me').then(() => {
+    new Vue({
+        store,
+        router,
+        render: h => h(App)
+    }).$mount('#app')
+})
