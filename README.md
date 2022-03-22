@@ -117,6 +117,8 @@ Example config your Laravel project
     ```
 
 6. Add authentication routes to backend:
+
+    routes/web.php
     ``` php
     // Routes for SPA API calls
     Route::prefix('spa')->group(function () {
@@ -136,7 +138,7 @@ Example config your Laravel project
     });
     ```
 
-    Auth\LoginController.php
+    LoginController.php
     ``` php
     <?php
 
@@ -194,7 +196,7 @@ Example config your Laravel project
     }
     ```
 
-    Auth\CsrfCookieController.php
+    CsrfCookieController.php
     ``` php
     <?php
 
