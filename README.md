@@ -118,17 +118,18 @@ Example config your Laravel project
 
 6. Add authentication routes to backend:
     ``` php
+    // Routes for SPA API calls
     Route::prefix('spa')->group(function () {
 
-        Route::post('login', 'Auth\LoginController@login');
-        Route::get('csrf-cookie', 'Auth\CsrfCookieController@show');
-        // Route::get('locale/{locale}', 'HomeController@setLocale');
+        Route::post('login', [LoginController::class, 'login']);
+        Route::post('logout', [LoginController::class, 'logout']);
+        Route::get('csrf-cookie', [CsrfCookieController::class, 'show']);
 
         /**
          * Stranice dozvoljene za pristup samo autorizovanim korisnicima
          */
         Route::group(['middleware' => 'auth'], function () {
-            Route::get('check', 'HomeController@check');
+            Route::get('check', [HomeController::class, 'check']);
 
             require __DIR__.'/spa.php';
         });
@@ -139,42 +140,65 @@ Example config your Laravel project
     ``` php
     <?php
 
-    namespace App\Http\Controllers\Auth;
+    namespace App\Http\Controllers;
 
-    use App\Models\User;
+    use Illuminate\Http\JsonResponse;
     use Illuminate\Http\Request;
-    use App\Http\Controllers\Controller;
+    use Illuminate\Support\Facades\Auth;
     use Illuminate\Validation\ValidationException;
-    use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
     class LoginController extends Controller
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Login Controller
-        |--------------------------------------------------------------------------
-        |
-        | This controller handles authenticating users for the application and
-        | redirecting them to your home screen. The controller uses a trait
-        | to conveniently provide its functionality to your applications.
-        |
-        */
+        /**
+         * Handle an authentication attempt.
+         *
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
+         */
+        public function login(Request $request)
+        {
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
 
-        use AuthenticatesUsers;
+            if (Auth::attempt($credentials)) {
+                $request->session()->regenerate();
+
+                // status 200 confirms credentials validity
+                return new JsonResponse([], 200);
+            }
+
+            throw ValidationException::withMessages([
+                'email' => [trans('auth.failed')],
+            ]);
+        }
 
         /**
-         * Where to redirect users after login.
+         * Log the user out of the application.
          *
-         * @var string
+         * @param  \Illuminate\Http\Request  $request
+         * @return \Illuminate\Http\Response
          */
-        protected $redirectTo = '/home';
+        public function logout(Request $request)
+        {
+            Auth::logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            // status 200 confirms credentials validity
+            return new JsonResponse([], 200);
+        }
+    }
     ```
 
     Auth\CsrfCookieController.php
     ``` php
     <?php
 
-    namespace App\Http\Controllers\Auth;
+    namespace App\Http\Controllers;
 
     use Illuminate\Http\JsonResponse;
     use Illuminate\Http\Request;
