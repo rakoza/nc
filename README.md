@@ -26,18 +26,18 @@ Example config your Laravel project
         transpileDependencies: true,
 
         devServer: {
-            host: 'laravel.test',
+            host: 'nc.local',
             // When devServer.proxy is set to a string, only XHR requests will be proxied.
-            // proxy: 'http://laravel.test',
+            // proxy: 'http://nc.local',
             // @see: https://github.com/starkovsky/laravel-vue-cli
             proxy: {
                 '/spa': {
-                    target: 'http://laravel.test',
+                    target: 'http://nc.local',
                 },
                 // staticki asseti su u public/static
                 // logo, images i slicne stvari
                 '/static': {
-                    target: 'http://laravel.test',
+                    target: 'http://nc.local',
                 }
             },
         },
@@ -59,7 +59,7 @@ Example config your Laravel project
         // modify the location of the generated HTML file.
         // Specify the output path for the generated index.html (relative to outputDir). Can also be an absolute path.
         indexPath: process.env.NODE_ENV === 'production'
-            ? '../../../resources/views/app.blade.php'
+            ? '../../resources/views/index.blade.php'
             : 'index.html'
     })
     ```
@@ -79,9 +79,11 @@ Example config your Laravel project
     **routes/web.php**
 
     ``` php
-    <?php
-    // For public application
-    Route::any('/{any}', 'FrontendController@app')->where('any', '^(?!api).*$');
+    Route::get('/', [HomeController::class, 'index']);
+
+    // na produkciji moramo odgovoriti na refresh + /assets
+    // tj povesti korisnika na spa index page
+    Route::any('/{any}', [HomeController::class, 'index'])->where('any', '^(?!spa).*$');
     ```
 
     **app/Http/Controllers/FrontendController.php**
@@ -91,13 +93,19 @@ Example config your Laravel project
     namespace App\Http\Controllers;
     use Illuminate\Http\Request;
 
-    class FrontendController extends Controller
+    class HomeController extends Controller
     {
-        // For public application
-        public function app()
+
+        /**
+         * Index page
+         *
+         * @return \Illuminate\Http\Response
+         */
+        public function index()
         {
-            return view('app');
+            return view('index');
         }
+
     }
     ```
 

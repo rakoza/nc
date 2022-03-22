@@ -36,6 +36,6 @@ module.exports = defineConfig({
     // modify the location of the generated HTML file.
     // Specify the output path for the generated index.html (relative to outputDir). Can also be an absolute path.
     indexPath: process.env.NODE_ENV === 'production'
-        ? '../../../resources/views/app.blade.php'
+        ? '../../resources/views/index.blade.php'
         : 'index.html'
 })
