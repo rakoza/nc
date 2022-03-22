@@ -113,9 +113,3 @@ Example config your Laravel project
     ``` js
     vue add router
     ```
-
-6. Change `base: process.env.BASE_URL` in `router.js` for correct Vue Router
-    ``` js
-    // For App
-    base: '/',
-    ```
