@@ -1,64 +1,108 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Laravel 9 + Vue CLI 5
+Example config your Laravel project
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Steps for Scaffolding From Scratch
+1. Create Laravel Project
 
-## About Laravel
+   ``` sh
+   laravel new my-project
+   cd my-project
+   # remove existing frontend scaffold
+   rm -rf package.json webpack.mix.js resources/js resources/css
+   ```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+2. Create a Vue CLI 5 project
+   ``` sh
+   vue create front
+   cd front
+   ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+3. Configure Vue CLI 5 project
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    Edit `/front/vue.config.js`:
+    ``` js
+    const { defineConfig } = require('@vue/cli-service')
+    module.exports = defineConfig({
+        transpileDependencies: true,
 
-## Learning Laravel
+        devServer: {
+            host: 'laravel.test',
+            // When devServer.proxy is set to a string, only XHR requests will be proxied.
+            // proxy: 'http://laravel.test',
+            // @see: https://github.com/starkovsky/laravel-vue-cli
+            proxy: {
+                '/spa': {
+                    target: 'http://laravel.test',
+                },
+                // staticki asseti su u public/static
+                // logo, images i slicne stvari
+                '/static': {
+                    target: 'http://laravel.test',
+                }
+            },
+        },
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+        lintOnSave: process.env.NODE_ENV !== 'production',
+        productionSourceMap: false,
+        css: {
+            sourceMap: false
+        },
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+        // output built static files to Laravel's public dir.
+        // note the "build" script in package.json needs to be modified as well.
+        outputDir: '../public/assets',
 
-## Laravel Sponsors
+        publicPath: process.env.NODE_ENV === 'production'
+            ? '/assets/app/'
+            : '/',
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+        // modify the location of the generated HTML file.
+        // Specify the output path for the generated index.html (relative to outputDir). Can also be an absolute path.
+        indexPath: process.env.NODE_ENV === 'production'
+            ? '../../../resources/views/app.blade.php'
+            : 'index.html'
+    })
+    ```
 
-### Premium Partners
+    Edit `/resources/frontend/app/package.json`:
+    ``` diff
+    "scripts": {
+      "serve": "vue-cli-service serve",
+    - "build": "vue-cli-service build",
+    + "build": "rm -rf ../../../public/assets/app/{js,css,img} && vue-cli-service build --no-clean",
+      "lint": "vue-cli-service lint"
+    },
+    ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+4. Configure Laravel routes for SPA.
 
-## Contributing
+    **routes/web.php**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    ``` php
+    <?php
+    // For public application
+    Route::any('/{any}', 'FrontendController@app')->where('any', '^(?!api).*$');
+    ```
 
-## Code of Conduct
+    **app/Http/Controllers/FrontendController.php**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    ``` php
+    <?php
+    namespace App\Http\Controllers;
+    use Illuminate\Http\Request;
 
-## Security Vulnerabilities
+    class FrontendController extends Controller
+    {
+        // For public application
+        public function app()
+        {
+            return view('app');
+        }
+    }
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5. Change `base: process.env.BASE_URL` in `router.js` for correct Vue Router
+    ``` js
+    // For App
+    base: '/',
