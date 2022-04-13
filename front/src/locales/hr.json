@@ -1,0 +1,29 @@
+{
+    "welcome": "Dobro došli",
+    "tenant": "Zakupac | Zakupci",
+    "administration": "Administracija",
+    "profile": "Profil",
+    "sign_out": "Odjavi se",
+    "edit_profile": "Uredi profil",
+    "change_password": "Promjeni lozinku",
+    "password": "Lozinka",
+
+    "first_name": "Ime",
+    "last_name": "Prezime",
+    "middle_name": "Ime oca",
+    "nick_name": "Nadimak",
+    "id": "Broj lične karte",
+    "father_s_id": "Broj očeve lk.",
+    "mother_s_id": "Broj majčine lk.",
+    "gender": "Pol",
+    "comment": "Komentar",
+
+    "male": "Muški",
+    "female": "Ženski",
+    "switch_language": "Promjeni jezik",
+    "language_en": "Engleski",
+    "language_hr": "Croatian",
+    "language": "Jezik | Jezici",
+
+    "last": "Posljednji"
+}

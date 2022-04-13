@@ -43,7 +43,7 @@ module.exports = defineConfig({
     // added by i18n vue-cli plugin
     pluginOptions: {
       i18n: {
-        locale: 'en',
+        locale: 'hr',
         fallbackLocale: 'en',
         localeDir: 'locales',
         enableInSFC: false,

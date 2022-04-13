@@ -1,14 +1,25 @@
 <template>
     <div id="app" v-if="!isLoading">
-        <router-view />
+        <main-menu v-if="isAuthenticated"></main-menu>
+
+        <transition name="fade" mode="out-in">
+            <router-view />
+        </transition>
     </div>
 </template>
 
 <script>
 
+// @ is an alias to /src
+import MainMenu from '@/components/MainMenu'
+
 // console.log(process.env);
 
 export default {
+
+    components: {
+        MainMenu,
+    },
 
     data() {
         return {

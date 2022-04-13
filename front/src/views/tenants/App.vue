@@ -1,14 +1,11 @@
 <template>
     <!-- Hero -->
-    <section class="hero is-primary">
+    <section class="hero is-success">
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">
-                    aplikacija.com
+                    tenants
                 </h1>
-                <h2 class="subtitle">
-                    administrativni panel
-                </h2>
             </div>
         </div>
     </section>

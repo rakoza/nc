@@ -1,0 +1,56 @@
+
+////////////////////////////////////////////////
+// LITERA
+////////////////////////////////////////////////
+$grey-darker: #363636;
+$grey-dark: #373a3c;
+$grey: #55595c;
+$grey-light: #818a91;
+$grey-lighter: #d9dee2;
+
+$orange: #f0ad4e;
+$yellow: #f6d55c;
+$green: #02b875;
+$blue: #4a68e5;
+$red: #ff6584;
+
+$link: #4582ec !default;
+$primary: $blue !default;
+$danger: $red;
+$warning: $orange;
+
+// default setup
+// $primary: $turquoise
+// $link: $blue
+// $info: $cyan
+// $success: $green
+// $warning: $yellow
+// $danger: $red
+// $dark: $grey-darker
+// $text: $grey-dark
+
+
+$subtitle-color: $grey;
+
+$family-heading: "Poppins", "Raleway", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Arial, sans-serif;
+
+$body-size: 15px;
+
+// $family-serif: Georgia, Cambria, "Times New Roman", Times, sans-serif;
+$family-serif: $family-heading;
+$family-sans-serif: $family-heading;
+
+// $navbar-height: 4rem;
+$navbar-item-hover-color: $link;
+$navbar-item-hover-background-color: transparent;
+$navbar-item-active-color: $link;
+$navbar-item-active-background-color: transparent;
+
+$navbar-dropdown-item-hover-color: $link;
+$navbar-dropdown-item-hover-background-color: transparent;
+$navbar-dropdown-item-active-color: $link;
+$navbar-dropdown-item-active-background-color: transparent;
+
+$bulmaswatch-import-font: true !default;
+
+$box-shadow: 0 0 1px $grey-light;

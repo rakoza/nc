@@ -1,0 +1,24 @@
+// Helpers
+@import 'helpers';
+
+// Theme
+@import 'theme';
+
+// Import Bulma and Buefy styles
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
+@import 'overides';
+
+div.required > label:after {
+    color: $red;
+    content: "*";
+}
+
+label.required:after {
+    color: $red;
+    content: "*";
+}
+
+// You probably already include the core styles
+@import "@fortawesome/fontawesome-free/css/all.min.css";

@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import i18n from './i18n'
+import './buefy'
 
 Vue.config.productionTip = false
 
