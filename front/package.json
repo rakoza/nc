@@ -5,19 +5,23 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "rm -rf ../../../public/assets/app/{js,css,img} && vue-cli-service build --no-clean",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
   },
   "dependencies": {
     "axios": "^0.26.1",
+    "buefy": "^0.9.19",
     "core-js": "^3.8.3",
     "lodash": "^4.17.21",
     "vue": "^2.6.14",
+    "vue-i18n": "^8.26.3",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@intlify/vue-i18n-loader": "^1.1.0",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
@@ -25,6 +29,7 @@
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
+    "vue-cli-plugin-i18n": "~2.3.1",
     "vue-template-compiler": "^2.6.14"
   },
   "eslintConfig": {

@@ -21,6 +21,7 @@ module.exports = defineConfig({
 
     lintOnSave: process.env.NODE_ENV !== 'production',
     productionSourceMap: false,
+
     css: {
         sourceMap: false
     },
@@ -37,5 +38,16 @@ module.exports = defineConfig({
     // Specify the output path for the generated index.html (relative to outputDir). Can also be an absolute path.
     indexPath: process.env.NODE_ENV === 'production'
         ? '../../resources/views/index.blade.php'
-        : 'index.html'
+        : 'index.html',
+
+    // added by i18n vue-cli plugin
+    pluginOptions: {
+      i18n: {
+        locale: 'en',
+        fallbackLocale: 'en',
+        localeDir: 'locales',
+        enableInSFC: false,
+        enableBridge: false
+      }
+    }
 })
