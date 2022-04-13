@@ -1,33 +1,58 @@
 <template>
     <section>
-        <h1>Login form</h1>
 
-        <!-- Email -->
-        <label for="name">Email:</label>
-        <input
-            type="text"
-            name="email"
-            ref="email"
-            size="is-large"
-            v-model="email"
-            @keyup.enter="submitForm"
-            />
-        <br>
+        <div class="container is-fullhd">
 
-        <!-- Password -->
-        <label for="password">Password:</label>
-        <input
-            type="password"
-            name="password"
-            v-model="password"
-            @keyup.enter="submitForm"
-            />
-        <br>
+            <div class="columns">
+                <div class="column is-flex is-flex-direction-column is-justify-content-center p-6" style="min-height: 100vh;">
 
+                    <!-- Login face -->
+                    <div class="has-text-centered mb-5">
+                        <img src="../assets/face.svg" width="150" height="150" alt="login-face">
+                    </div>
 
-        <button @click="submitForm">
-            Submit
-        </button>
+                    <!-- Email -->
+                    <b-field label="Email">
+                        <b-input
+                            type="email"
+                            name="email"
+                            ref="email"
+                            size="is-medium"
+                            v-model="email"
+                            @keyup.enter="submitForm"
+                            maxlength="50">
+                        </b-input>
+                    </b-field>
+
+                    <!-- Password -->
+                    <b-field label="Password">
+                        <b-input
+                            type="password"
+                            name="password"
+                            size="is-medium"
+                            password-reveal
+                            v-model="password"
+                            @keyup.enter="submitForm">
+                        </b-input>
+                    </b-field>
+
+                    <!-- Submit button -->
+                    <b-button
+                        class="mt-5"
+                        size="is-medium"
+                        type="is-primary"
+                        @click="submitForm">
+                        Submit
+                    </b-button>
+                </div>
+
+                <!-- illustration -->
+                <div class="column is-flex is-justify-content-center is-align-items-center p-6 is-hidden-mobile">
+                    <img src="../assets/login.svg" alt="login">
+                </div>
+            </div>
+
+        </div>
     </section>
 </template>
 
