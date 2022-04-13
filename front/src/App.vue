@@ -1,22 +1,14 @@
 <template>
     <div id="app" v-if="!isLoading">
-        <protected-view v-if="isAuthenticated" />
-        <public-view v-else />
+        <router-view />
     </div>
 </template>
 
 <script>
 
-import PublicView from './views/PublicView'
-import ProtectedView from './views/ProtectedView'
-
 // console.log(process.env);
 
 export default {
-    components: {
-        PublicView,
-        ProtectedView,
-    },
 
     data() {
         return {
@@ -33,12 +25,6 @@ export default {
 
     mounted() {
         this.fetchInitData()
-
-        // ovo je situacija kad je korisik prijavljen, a proba poci na rute home ili login
-        if(this.isAuthenticated === true && ['home','login'].includes(this.$route.name)) {
-            // samo ga vratimo na dashboard
-            this.$router.replace({ name: 'dashboard' })
-        }
     },
 
     methods: {

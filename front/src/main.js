@@ -8,6 +8,10 @@ Vue.config.productionTip = false
 
 axios.defaults.withCredentials = true
 
+// ovdje se inicijalizuje nasa `single page` aplikacija
+// pozivamo vuex akciju koja salje GET zahtjev na rutu /spa/check
+// zavisno od http responsa code-a postavlja state.authenticated na true/false
+// i kreira/mauntuje komponentu App.vue
 store.dispatch('auth/me').then(() => {
     new Vue({
         store,
