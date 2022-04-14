@@ -16,6 +16,10 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
+        // Firstly we are creating roles
+        $this->call(RoleSeeder::class);
+
+        // And then we are initializing first user and assign him admin role
         $this->call(UserSeeder::class);
     }
 }

@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
+        'phone',
+        'address',
+        'notes',
+        'is_active',
     ];
 
     /**
@@ -41,4 +46,34 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /* ---------------------------------------------------------
+     * Relations to other models
+     * ---------------------------------------------------------
+     */
+
+    /**
+     * Get the User Role
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /* ---------------------------------------------------------
+     * Utility functions
+     * ---------------------------------------------------------
+     */
+
+    /**
+     * Get true if the user has any of the provided roles
+     *
+     * @return boolean
+     */
+    public function hasRole(array $roles): bool
+    {
+        return in_array($this->role->name, $roles);
+    }
 }

@@ -20,6 +20,12 @@ class UserSeeder extends Seeder
             'name' => 'Predrag Rakonjac',
             'email' => 'predrag.rakonjac@gmail.com',
             'password' => bcrypt('predrag.rakonjac'),
+
+            // additional fields
+            'is_active' => true,
+            'role_id' => 1,
+            'phone' => '+38267200480',
+            'address' => 'Pera Ćetkovića 95, Podgorica',
         ]);
     }
 }
