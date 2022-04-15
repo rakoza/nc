@@ -55,11 +55,11 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // if($user->hasRole(['administrator'])) {
-        //     // 401 ce inicirati redirekciju (vidi api.js), zato sam stavio 404
-        //     abort(404, 'An administrator account is not allowed to be deleted.');
-        //     return;
-        // }
+        if($user->hasRole(['administrator'])) {
+            // 401 ce inicirati redirekciju (vidi api.js), zato sam stavio 404
+            abort(404, 'An administrator account is not allowed to be deleted.');
+            return;
+        }
 
         // brisemo user account
         $user->delete();

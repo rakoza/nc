@@ -17,8 +17,6 @@ return new class extends Migration
             //fk
             $table->foreignId('role_id')->constrained();
 
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('notes', 1024)->nullable();
@@ -38,8 +36,6 @@ return new class extends Migration
             $table->dropForeign(['role_id']);
             $table->dropColumn('role_id');
 
-            $table->dropColumn('first_name');
-            $table->dropColumn('last_name');
             $table->dropColumn('phone');
             $table->dropColumn('address');
             $table->dropColumn('notes');
