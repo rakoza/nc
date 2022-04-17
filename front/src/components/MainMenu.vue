@@ -90,14 +90,25 @@
 
                 <b-navbar-item
                     tag="router-link"
+                    :active="$route.name == 'profile'"
                     :to="{ path: '/profile' }">
                     <i class="fas fa-fw fa-lg fa-user-cog mr-1"></i>
                     {{ $t('edit_profile') }}
                 </b-navbar-item>
-                <!-- <b-navbar-item @click.prevent="changePassword">
-                    <i class="fas fa-lg fa-fw fa-key mr-10"></i>
-                    {{ $t('change_password') }}
-                </b-navbar-item> -->
+
+                <template v-if="isAdmin">
+                    <hr class="navbar-divider">
+
+                    <!-- Users -->
+                    <b-navbar-item
+                        v-if="isAdmin"
+                        tag="router-link"
+                        :active="$route.name == 'users'"
+                        :to="{ name: 'users' }">
+                        <i class="fas fa-fw fa-lg fa-users mr-1" aria-hidden="true"></i>
+                        {{ $tc('user', 2) }}
+                    </b-navbar-item>
+                </template>
 
                 <hr class="navbar-divider">
 
@@ -139,6 +150,9 @@ export default {
     computed: {
         currentRoutePath() {
             return this.$route.path
+        },
+        isAdmin() {
+            return true
         },
         // user() {
         //     return User

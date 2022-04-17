@@ -47,6 +47,29 @@ class ProfileController extends Controller
     }
 
     /**
+     * Change logged in user password.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storenewpass(Request $request)
+    {
+        $messages = [
+            'current_password.old_password' => 'Wrong current password',
+        ];
+
+        $this->validate($request, [
+            // old_password is the custom validation rule defined in AppServiceProvide boot method
+            'current_password' => 'required|old_password:'.auth()->user()->password,
+            'password' => 'required|confirmed|min:8',
+        ], $messages);
+
+        $user = auth()->user();
+        $user->password = bcrypt($request->password);
+        $user->save();
+    }
+
+    /**
      * Delete account
      *
      * @return \Illuminate\Http\Response

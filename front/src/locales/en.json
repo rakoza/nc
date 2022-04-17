@@ -7,6 +7,10 @@
     "edit_profile": "Edit profile",
     "change_password": "Change password",
     "password": "Password",
+    "user": "User | Users",
+    "exit": "Exit",
+    "close": "Close",
+    "cancel": "Cancel",
 
     "first_name": "First name",
     "last_name": "Last name",

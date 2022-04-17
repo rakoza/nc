@@ -26,4 +26,23 @@ class HomeController extends Controller
         return 'cool';
     }
 
+    /**
+     * Update user's password.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User $user
+     * @return \Illuminate\Http\Response
+     */
+    public function updateUserPassword(Request $request, \App\Models\User $user)
+    {
+        $this->validate($request, [
+            'password' => 'required|confirmed',
+        ]);
+
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        return compact('user');
+    }
+
 }

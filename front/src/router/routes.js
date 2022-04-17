@@ -1,4 +1,5 @@
 import Dashboard from '@/views/dashboard/App'
+import Users from '@/views/users/App'
 import Tenants from '@/views/tenants/App'
 
 export default [
@@ -14,6 +15,11 @@ export default [
         path: `/dashboard`,
         name: 'dashboard',
         component: Dashboard,
+    },
+    {
+        path: `/users`,
+        name: 'users',
+        component: Users,
     },
     {
         path: `/tenants`,

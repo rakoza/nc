@@ -7,6 +7,10 @@
     "edit_profile": "Uredi profil",
     "change_password": "Promjeni lozinku",
     "password": "Lozinka",
+    "user": "Korisnik | Korisnici",
+    "exit": "Izađi",
+    "close": "Zatvori",
+    "cancel": "Otkaži",
 
     "first_name": "Ime",
     "last_name": "Prezime",
