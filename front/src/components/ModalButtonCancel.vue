@@ -1,6 +1,6 @@
 <template>
     <button type="button" class="button is-light" @click="click">
-        <slot>Otkaži</slot>
+        <slot>{{ $t('cancel') }}</slot>
         <i class="fas fa-times" style="margin-left: 5px;"></i>
     </button>
 </template>

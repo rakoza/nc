@@ -4,35 +4,13 @@
         <page-header title="Korisnici">
             <!-- Buttons -->
             <div class="level-item buttons">
-                <!-- isAdmin -->
-                <div class="is-size-5 mr-3" v-if="!user">Za promjenu podataka selektuj korisnika u listi</div>
-                <template v-else>
-                <!-- Promjena lozinke -->
-                <b-button
-                    @click="changePassword"
-                    type="is-primary"
-                    icon-pack="fas"
-                    icon-right="key">
-                    Promjeni lozinku
-                </b-button>
-
-                <!-- Promjena lozinke -->
-                <b-button
-                    @click="editUser"
-                    type="is-primary"
-                    icon-pack="fas"
-                    icon-right="edit">
-                    Promjeni podatke
-                </b-button>
-                </template>
-
                 <!-- Kreiranje novog korisnika -->
                 <b-button
                     @click="createUser"
                     type="is-primary"
                     icon-pack="fas"
                     icon-right="user-plus">
-                    Novi korisnik
+                    {{ $t('add_new_user') }}
                 </b-button>
             </div>
         </page-header>
@@ -42,17 +20,18 @@
                 <table class="table is-fullwidth is-hoverable">
                     <thead>
                         <th style="width: 30px;"></th>
-                        <th style="width: 150px;" v-if="isAdmin">Rola</th>
-                        <th style="width: 250px;">Email</th>
-                        <th style="width: 250px;">Ime i prezime</th>
-                        <th style="width: 150px;">Telefon</th>
-                        <th>Adresa</th>
-                        <th style="width: 120px;" class="has-text-right">Kreiran</th>
-                        <th style="width: 90px;" class="has-text-right" v-if="isAdmin">Aktivan</th>
+                        <th style="width: 150px;" v-if="isAdmin">{{ $t('role') }}</th>
+                        <th style="width: 250px;">{{ $t('email_address') }}</th>
+                        <th style="width: 250px;">{{ $t('full_name') }}</th>
+                        <th style="width: 150px;">{{ $t('telephone') }}</th>
+                        <th>{{ $t('address') }}</th>
+                        <th style="width: 120px;" class="has-text-right">{{ $t('created_at') }}</th>
+                        <th style="width: 90px;" class="has-text-right" v-if="isAdmin">{{ $t('is_active') }}</th>
+                        <th></th>
                     </thead>
 
                     <tbody>
-                        <tr v-for="(item,index) in users" :key="index" @click="selectUser(item)" @dblclick="editUser" :class="{'is-selected': item.id == selectedUserId}" class="pointer">
+                        <tr v-for="(item,index) in users" :key="index">
                             <td>{{ index + 1 }}.</td>
                             <td v-if="isAdmin">
                                 <b-icon :icon="item.is_active ? 'user' : 'user-slash'" size="is-small" :type="roleIconType(item)"></b-icon>
@@ -66,6 +45,30 @@
                             <td class="has-text-right"
                                 :class="{'has-text-danger has-text-weight-bold': !item.is_active}"
                                 v-if="isAdmin">{{ item.is_active ? 'Da' : 'Ne' }}</td>
+                            <td>
+                                <div class="is-flex is-flex-wrap-nowrap is-justify-content-flex-end">
+                                    <!-- Promjena lozinke -->
+                                    <b-button
+                                        v-if="isAdmin"
+                                        @click="changePassword(item)"
+                                        class="mr-2"
+                                        type="is-primary"
+                                        icon-pack="fas"
+                                        icon-right="key">
+                                        <!-- {{ $t('change_password') }} -->
+                                    </b-button>
+
+                                    <!-- Promjena lozinke -->
+                                    <b-button
+                                        v-if="isAdmin"
+                                        @click="editUser(item)"
+                                        type="is-primary"
+                                        icon-pack="fas"
+                                        icon-right="edit">
+                                        <!-- {{ $t('edit') }} -->
+                                    </b-button>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -90,9 +93,6 @@ export default {
     },
 
     computed: {
-        selectedUserId() {
-            return this.user ? this.user.id : null
-        },
         isAdmin() {
             // return appconfig.userRole === 'administrator'
             return true
@@ -110,9 +110,6 @@ export default {
                 .then(data => {
                     this.users = data.users
                     this.roles = data.roles
-
-                    // moramo anulirati izabranog korisnika, jer su to sada stari podaci u njemu
-                    this.user = null
                 })
                 .catch(error => {
                     this.$alertError(error.message);
@@ -137,7 +134,7 @@ export default {
                 }, // Events to be binded to the injected component
             });
         },
-        editUser()
+        editUser(user)
         {
             this.$buefy.modal.open({
                 parent: this,
@@ -146,14 +143,14 @@ export default {
                 props: {
                     formMode: 'update',
                     roles: this.roles,
-                    user: this.user,
+                    user,
                 }, // Props to be binded to the injected component
                 events: {
                     'data-saved': this.reloadData,
                 }, // Events to be binded to the injected component
             });
         },
-        changePassword()
+        changePassword(user)
         {
             this.$buefy.modal.open({
                 parent: this,
@@ -161,18 +158,9 @@ export default {
                 hasModalCard: true,
                 props: {
                     formMode: 'update',
-                    user: this.user,
+                    user,
                 }, // Props to be binded to the injected component
             });
-        },
-        selectUser(user)
-        {
-            // if(this.user && this.user.id == user.id) {
-            //   this.user = null
-            //   return
-            // }
-
-            this.user = user
         },
         roleIconType(user)
         {
@@ -181,9 +169,7 @@ export default {
             // | id | name          | created_at          | updated_at          |
             // +----+---------------+---------------------+---------------------+
             // |  1 | administrator | 2021-11-14 09:43:22 | 2021-11-14 09:43:22 |
-            // |  2 | editor        | 2021-11-14 09:43:22 | 2021-11-14 09:43:22 |
-            // |  3 | approver      | 2021-11-14 09:43:22 | 2021-11-14 09:43:22 |
-            // |  4 | volunteer     | 2022-01-12 08:29:28 | 2022-01-12 08:29:28 |
+            // |  2 | user          | 2021-11-14 09:43:22 | 2021-11-14 09:43:22 |
             // +----+---------------+---------------------+---------------------+
 
             if(user.role.id == 1) {
@@ -191,16 +177,8 @@ export default {
                 return 'is-danger';
             }
             if(user.role.id == 2) {
-                // editor
-                return 'is-warning';
-            }
-            if(user.role.id == 3) {
-                // approver
+                // user
                 return 'is-info';
-            }
-            if(user.role.id == 4) {
-                // volunteer
-                return 'is-dark';
             }
         },
     },

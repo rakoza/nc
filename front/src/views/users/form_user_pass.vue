@@ -16,37 +16,37 @@
             <!-- password -->
             <b-field
                 class="required"
-                label="Nova lozinka"
+                :label="$t('new_password')"
                 :type="form.hasError('password')"
                 :message="form.errorMessage('password')">
                 <b-input
                     type="password"
                     name="password"
                     v-model="form.password"
-                    placeholder="Nova lozinka">
+                    :placeholder="$t('new_password')">
                 </b-input>
             </b-field>
 
             <!-- password_confirmation -->
             <b-field
                 class="required"
-                label="Potvrda nove lozinke"
+                :label="$t('confirm_new_password')"
                 :type="form.hasError('password_confirmation')"
                 :message="form.errorMessage('password_confirmation')">
                 <b-input
                     type="password"
                     name="password_confirmation"
                     v-model="form.password_confirmation"
-                    placeholder="Potvrda nove lozinke">
+                    :placeholder="$t('confirm_new_password')">
                 </b-input>
             </b-field>
 
         </section>
 
         <!--Card Footer-->
-        <footer class="modal-card-foot" style="justify-content: space-between;">
+        <footer class="modal-card-foot">
             <div>
-                <b-button @click="$parent.close()">{{ $t('cancel') }}</b-button>
+                <modal-button-cancel @click="$parent.close()"></modal-button-cancel>
                 <modal-button-save @click="submit()"></modal-button-save>
             </div>
         </footer>
@@ -74,7 +74,7 @@ export default {
 
     computed: {
         title() {
-            return 'Promjena lozinke'
+            return this.$t('password_change')
         },
     },
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Header -->
-        <page-header title="Profile">
+        <page-header :title="title">
             <!-- Buttons -->
             <div class="level-item buttons">
                 <!-- Promjena podataka -->
@@ -11,7 +11,7 @@
                     type="is-light has-text-danger"
                     icon-pack="fas"
                     icon-right="user-slash">
-                    Izbriši nalog
+                    {{ $t('delete_account') }}
                 </b-button>
 
                 <!-- Promjena lozinke -->
@@ -20,14 +20,14 @@
                     type="is-primary"
                     icon-pack="fas"
                     icon-right="key">
-                    Promjeni lozinku
+                    {{ $t('change_password') }}
                 </b-button>
 
             </div>
         </page-header>
 
         <!-- Container -->
-        <div class="container">
+        <section class="section">
             <!-- column 1 -->
             <div class="columns">
                 <div class="column is-one-quarter has-text-centered">
@@ -60,19 +60,19 @@
                     <!-- name -->
                     <b-field
                         class="required"
-                        label="Ime i prezime"
+                        :label="$t('full_name')"
                         :type="form.hasError('name')"
                         :message="form.errorMessage('name')">
                         <b-input
                             size="is-large"
                             name="name"
                             v-model="form.name"
-                            placeholder="Ime i prezime">
+                            :placeholder="$t('full_name')">
                         </b-input>
                     </b-field>
 
                     <!-- email -->
-                    <b-field label="Email adresa">
+                    <b-field :label="$t('email_address')">
                         <b-input
                             v-if="profile"
                             disabled
@@ -85,33 +85,33 @@
 
                     <!-- phone -->
                     <b-field
-                        label="Broj telefona"
+                        :label="$t('telephone_number')"
                         :type="form.hasError('phone')"
                         :message="form.errorMessage('phone')">
                         <b-input
                             icon="phone"
                             v-model="form.phone"
                             name="phone"
-                            placeholder="Broj telefona na kojem si uvijek dostupan">
+                            :placeholder="$t('telephone_number')">
                         </b-input>
                     </b-field>
 
                     <!-- address -->
                     <b-field
-                        label="Adresa - Ulica, Grad, Država"
+                        :label="$t('full_address')"
                         :type="form.hasError('address')"
                         :message="form.errorMessage('address')">
                         <b-input
                             icon="map"
                             v-model="form.address"
                             name="address"
-                            placeholder="Navedi punu adresu">
+                            :placeholder="$t('full_address')">
                         </b-input>
                     </b-field>
 
                     <!-- notes -->
                     <b-field
-                        label="Napiši nešto o sebi"
+                        :label="$t('write_something_about_yourself')"
                         :type="form.hasError('notes')"
                         :message="form.errorMessage('notes')">
                         <b-input
@@ -119,7 +119,7 @@
                             maxlength="1000"
                             v-model="form.notes"
                             name="notes"
-                            placeholder="Najbolje opiši sebe">
+                            :placeholder="$t('write_something_about_yourself')">
                         </b-input>
                     </b-field>
 
@@ -127,7 +127,7 @@
                     <modal-button-save @click="submit()"></modal-button-save>
                 </div>
             </div>
-        </div>
+        </section>
 
     </div>
 </template>
@@ -152,6 +152,12 @@ export default {
 
             isLoadingDelete: false,
             isUpLoading: false,
+        }
+    },
+
+    computed: {
+        title() {
+            return this.$t('profile')
         }
     },
 
@@ -224,9 +230,10 @@ export default {
             }
 
             this.$buefy.dialog.confirm({
-                title: 'Brisanje naloga',
-                message: 'Potvrdite da želite izbrisati vaš korisnički nalog!',
-                confirmText: 'Da, izbriši nalog',
+                title: this.$t('delete_account'),
+                message: this.$t('delete_account_confirmation_statement'),
+                confirmText: this.$t('yes_delete_account'),
+                cancelText: this.$t('cancel'),
                 type: 'is-danger',
                 hasIcon: true,
                 onConfirm: () => runDeleteAccount()

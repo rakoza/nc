@@ -30,40 +30,40 @@
             <b-field
                 v-if="formMode === 'create'"
                 class="required"
-                label="Email"
+                :label="$t('email_address')"
                 :type="form.hasError('email')"
                 :message="form.errorMessage('email')">
                 <b-input
                     name="email"
                     v-model="form.email"
-                    placeholder="Email">
+                    :placeholder="$t('email_address')">
                 </b-input>
             </b-field>
 
             <!-- name -->
             <b-field
                 class="required"
-                label="Ime i prezime"
+                :label="$t('full_name')"
                 :type="form.hasError('name')"
                 :message="form.errorMessage('name')">
                 <b-input
                     v-model="form.name"
                     name="name"
-                    placeholder="Ime i prezime">
+                    :placeholder="$t('full_name')">
                 </b-input>
             </b-field>
 
             <!-- password -->
             <b-field
                 class="required" v-if="formMode == 'create'"
-                label="Lozinka"
+                :label="$t('password')"
                 :type="form.hasError('password')"
                 :message="form.errorMessage('password')">
                 <b-input
                     v-model="form.password"
                     name="password"
                     type="password"
-                    placeholder="Lozinka">
+                    :placeholder="$t('password')">
                 </b-input>
             </b-field>
 
@@ -72,7 +72,7 @@
                 v-if="isAdmin"
                 expanded
                 class="required"
-                label="Rola"
+                :label="$t('role')"
                 :type="form.hasError('role_id')"
                 :message="form.errorMessage('role_id')">
                 <b-select expanded
@@ -86,31 +86,31 @@
 
             <!-- phone -->
             <b-field
-                label="Telefon"
+                :label="$t('telephone_number')"
                 :type="form.hasError('phone')"
                 :message="form.errorMessage('phone')">
                 <b-input
                     v-model="form.phone"
                     name="phone"
-                    placeholder="Telefon">
+                    :placeholder="$t('telephone_number')">
                 </b-input>
             </b-field>
 
             <!-- address -->
             <b-field
-                label="Adresa"
+                :label="$t('address')"
                 :type="form.hasError('address')"
                 :message="form.errorMessage('address')">
                 <b-input
                     v-model="form.address"
                     name="address"
-                    placeholder="Adresa">
+                    :placeholder="$t('address')">
                 </b-input>
             </b-field>
 
             <!-- notes -->
             <b-field
-                label="Napomena"
+                :label="$t('notes')"
                 :type="form.hasError('notes')"
                 :message="form.errorMessage('notes')">
                 <b-input
@@ -118,14 +118,14 @@
                     maxlength="1000"
                     v-model="form.notes"
                     name="notes"
-                    placeholder="Napomena">
+                    :placeholder="$t('notes')">
                 </b-input>
             </b-field>
 
             <!-- active -->
             <b-field
                 v-if="isAdmin"
-                label="Status"
+                :label="$t('is_active')"
                 :type="form.hasError('is_active')"
                 :message="form.errorMessage('is_active')">
                 <b-checkbox
@@ -133,16 +133,16 @@
                     v-model="form.is_active"
                     :true-value="1"
                     :false-value="0">
-                    {{ form.is_active ? 'Aktivan' : 'Neaktivan' }}
+                    {{ form.is_active ? $t('yes') : $t('no') }}
                 </b-checkbox>
             </b-field>
 
         </section>
 
         <!--Card Footer-->
-        <footer class="modal-card-foot" style="justify-content: space-between;">
+        <footer class="modal-card-foot is-justify-content-space-between">
             <div>
-                <b-button @click="$parent.close()">Izađi</b-button>
+                <modal-button-cancel @click="$parent.close()"></modal-button-cancel>
                 <modal-button-save @click="submit()"></modal-button-save>
             </div>
             <div v-if="formMode == 'update'">
@@ -189,7 +189,7 @@ export default {
 
     computed: {
         title() {
-            return this.formMode == 'create' ? 'Dodaj novog korisnika' : 'Promjeni podatke';
+            return this.formMode == 'create' ? this.$t('add_new_user') : this.$t('edit');
         },
         role() {
             // izabrana rola

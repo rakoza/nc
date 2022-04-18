@@ -1,6 +1,6 @@
 <template>
     <button type="button" class="button is-primary" @click="click">
-        <slot>Sačuvaj</slot>
+        <slot>{{ $t('save') }}</slot>
         <i class="fas fa-save" style="margin-left: 5px;"></i>
     </button>
 </template>
