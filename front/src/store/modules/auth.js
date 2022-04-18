@@ -5,7 +5,7 @@ export default {
 
     state: {
         authenticated: false,
-        // user: null
+        user: null
     },
 
     getters: {
@@ -13,9 +13,9 @@ export default {
             return state.authenticated
         },
 
-        // user (state) {
-        //     return state.user
-        // },
+        user (state) {
+            return state.user
+        },
     },
 
     mutations: {
@@ -23,9 +23,9 @@ export default {
             state.authenticated = value
         },
 
-        // SET_USER (state, value) {
-        //     state.user = value
-        // }
+        SET_USER (state, value) {
+            state.user = value
+        }
     },
 
     actions: {
@@ -43,12 +43,12 @@ export default {
         },
 
         me ({ commit }) {
-            return axios.get('/spa/check').then(() => {
+            return axios.get('/spa/check').then((response) => {
                 commit('SET_AUTHENTICATED', true)
-                // commit('SET_USER', response.data)
+                commit('SET_USER', response.data)
             }).catch(() => {
                 commit('SET_AUTHENTICATED', false)
-                // commit('SET_USER', null)
+                commit('SET_USER', null)
             })
         }
     }

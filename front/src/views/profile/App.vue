@@ -191,6 +191,13 @@ export default {
                 .put('/profile')
                 .then(() => {
                     this.$notify('Promjenili ste podatke', 'is-success')
+
+                    this.$store.dispatch('auth/me')
+                        .then(() => {
+                            console.log('all good')
+                        })
+                        .catch(error => this.$alertError(error))
+
                 })
                 .catch(() => {})
         },

@@ -82,8 +82,7 @@
                         <img class="is-rounded" style="max-height: 100%;" :src="profile.photo">
                     </figure> -->
                     <!-- <i class="fas fa-2x fa-fw fa-user-circle mr-10" v-else></i> -->
-                    <!-- {{ user.getFullName() }} -->
-                    Predrag Rakonjac
+                    {{ user.name }}
                 </b-navbar-item>
 
                 <hr class="navbar-divider">
@@ -154,9 +153,9 @@ export default {
         isAdmin() {
             return true
         },
-        // user() {
-        //     return User
-        // },
+        user() {
+            return this.$store.getters['auth/user']
+        },
         routes() {
             return [
                 {

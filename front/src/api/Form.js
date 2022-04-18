@@ -54,6 +54,26 @@ class Form {
         for(let field in data) {
             this[field] = data[field];
         }
+
+        // https://github.com/axios/axios#interceptors
+        // You can intercept requests or responses before they are handled by then or catch.
+        this.http.interceptors.response.use(
+            response => {
+                return response
+            },
+            error => {
+                // in case of error.message == 'Network Error', error.response is undefined
+                if(error.response) {
+                    // Add response interceptor to AXIOS instance for automatic forward
+                    // to login page in case of session expiration.
+                    if (error.response.status == 401 || error.response.data.exception == "Illuminate\\Session\\TokenMismatchException") {
+                        window.location = '/login';
+                    }
+                }
+
+                return Promise.reject(error)
+            }
+        );
     }
 
     /**

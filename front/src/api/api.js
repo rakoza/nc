@@ -13,25 +13,10 @@ const http = axios.create({
 })
 
 const successHandler = (response) => {
-    // if (isHandlerEnabled(response.config)) {
-    //   // Handle responses
-    // }
-    // return response
-
-    // @see Illuminate\Foundation\Auth\AuthenticatesUsers::logout
-    // regularni logout response
-    // if (response.status === 204) {
-    //     window.location = '/login';
-    // }
-
     return response.data
 }
 
 const errorHandler = (error) => {
-    // if (isHandlerEnabled(error.config)) {
-    //   // Handle errors
-    // }
-
     // in case of error.message == 'Network Error', error.response is undefined
     if(error.response) {
         // Add response interceptor to AXIOS instance for automatic forward
@@ -73,7 +58,6 @@ const app = {
 
 const profile = {
     get: () => http.get('/profile'),
-    // update: () => http.put('/profile', params),
     delete: () => http.delete('/profile'),
 }
 
