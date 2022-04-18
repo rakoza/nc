@@ -229,7 +229,7 @@ export default {
                     })
                     .catch(error => {
                         this.$alertError(error.message);
-                        throw error
+                        // throw error
                     })
                     .finally(() => {
                         this.isLoadingDelete = false

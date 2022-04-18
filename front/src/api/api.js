@@ -4,11 +4,14 @@ import axios from 'axios'
 // https://github.com/axios/axios
 const http = axios.create({
 
+    // `withCredentials` indicates whether or not cross-site Access-Control requests
+    // should be made using credentials
+    // withCredentials: true,
+
     // `baseURL` will be prepended to `url` unless `url` is absolute.
     // It can be convenient to set `baseURL` for an instance of axios to pass relative URLs
     // to methods of that instance.
     // baseURL: '/spa',
-    withCredentials: true,
     baseURL: '/spa',
 })
 

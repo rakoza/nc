@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import axios from 'axios'
 import i18n from './i18n'
 import './buefy'
 import { pick } from 'lodash'
@@ -14,8 +13,6 @@ import Form from './api/Form'
 import api from './api/api'
 
 Vue.config.productionTip = false
-
-axios.defaults.withCredentials = true
 
 Vue.prototype.$api  = api
 Vue.prototype.$pick = pick
