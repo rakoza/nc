@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreUser;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -29,7 +28,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreUser $request)
+    public function store(StoreUserRequest $request)
     {
         $user = User::create($request->validated());
 
@@ -57,7 +56,7 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreUser $request, User $user)
+    public function update(StoreUserRequest $request, User $user)
     {
         $user->update($request->validated());
 

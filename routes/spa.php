@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UserController;
 
 // treba biti dozvoljeno svi korisnicima
@@ -13,4 +14,6 @@ Route::put('pass', [ProfileController::class, 'storenewpass']);
 // place for protected routes, API routes for SPA
 Route::apiResource('users', UserController::class);
 Route::put('update-user-password/{user}', [HomeController::class, 'updateUserPassword']);
+
+Route::apiResource('tenants', TenantController::class);
 
