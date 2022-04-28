@@ -9,6 +9,7 @@
     "password_change": "Password change",
     "password": "Password",
     "user": "User | Users",
+    "username": "Username",
     "exit": "Exit",
     "close": "Close",
     "cancel": "Cancel",
@@ -34,7 +35,11 @@
     "created_at": "Created at",
     "role": "Role",
     "notes": "Notes",
+    "create": "Create a new one",
+    "edit": "Edit",
 
+    "name": "Name",
+    "name2": "Name",
     "first_name": "First name",
     "last_name": "Last name",
     "middle_name": "Middle name",
@@ -52,6 +57,14 @@
     "language_en": "English",
     "language_hr": "Croatian",
     "language": "Language | Languages",
+
+    "domain": "Internet domain",
+    "trial_period_end_date": "Trial period end date",
+    "database": "Database",
+    "server": "Server",
+    "database_server": "Database server",
+    "caching_server": "Caching server",
+    "timezone": "Timezone",
 
     "last": "Last"
 }

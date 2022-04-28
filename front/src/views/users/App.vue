@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Header -->
-        <page-header title="Korisnici">
+        <page-header :title="title">
             <!-- Buttons -->
             <div class="level-item buttons">
                 <!-- Kreiranje novog korisnika -->
@@ -93,6 +93,9 @@ export default {
     },
 
     computed: {
+        title() {
+            return this.$tc('user', 2)
+        },
         isAdmin() {
             // return appconfig.userRole === 'administrator'
             return true

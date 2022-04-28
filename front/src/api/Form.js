@@ -1,6 +1,7 @@
 import Errors from './Errors';
 import axios from 'axios';
-import { ToastProgrammatic as Toast } from 'buefy'
+import { ToastProgrammatic as Toast } from 'buefy';
+import moment from 'moment';
 
 class Form {
 
@@ -46,14 +47,10 @@ class Form {
     /**
      * Form constructor class
      *
-     * @param data
+     * @param {Object} data
      */
     constructor(data) {
-        this.#originalData = data;
-
-        for(let field in data) {
-            this[field] = data[field];
-        }
+        this.setData(data)
 
         // https://github.com/axios/axios#interceptors
         // You can intercept requests or responses before they are handled by then or catch.
@@ -77,6 +74,27 @@ class Form {
     }
 
     /**
+     * Set form data
+     *
+     * @param {Object} data
+     */
+    setData(data) {
+        this.#originalData = data;
+
+        for(let field in data) {
+
+            let value = data[field]
+
+            // formatiramo u Date object, prilagodjavamo za Buefy date picker
+            if(moment(value, "YYYY-MM-DD", true).isValid()) {
+                value = moment(value).toDate()
+            }
+
+            this[field] = value
+        }
+    }
+
+    /**
      * Get back original data
      */
     reset() {
@@ -95,12 +113,17 @@ class Form {
     #data() {
         const data = {}
 
-        for (const [key, value] of Object.entries(this)) {
+        for (let [key, value] of Object.entries(this)) {
             // private properties are not to be listed
 
             // functions (http) are to be skipped
             if(typeof value === 'function' || key === 'errors') {
                 continue
+            }
+
+            // formatiramo u date string, jer Buefy date picker radi sa Date objektom
+            if(value instanceof Date) {
+                value = moment(value).format("YYYY-MM-DD")
             }
 
             data[key] = value
@@ -186,7 +209,7 @@ class Form {
             method = 'post'
         }
 
-        if(method === 'update') {
+        if(method === 'update' || method === 'edit') {
             method = 'put'
         }
 

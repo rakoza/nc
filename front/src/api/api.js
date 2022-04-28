@@ -68,6 +68,12 @@ const users = {
     all: () => http.get('users')
 }
 
+const tenants = {
+    all: () => http.get('tenants'),
+    get: (id) => http.get(`tenants/${id}`),
+    delete: (id) => http.delete(`tenants/${id}`),
+}
+
 /* ---------------------------------------------------------
  * JS Module export
  * ---------------------------------------------------------
@@ -76,4 +82,5 @@ export default {
     app,
     profile,
     users,
+    tenants,
 }

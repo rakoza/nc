@@ -9,6 +9,7 @@
     "password_change": "Promjena lozinke",
     "password": "Lozinka",
     "user": "Korisnik | Korisnici",
+    "username": "Korisnik",
     "exit": "Izađi",
     "close": "Zatvori",
     "cancel": "Otkaži",
@@ -34,7 +35,11 @@
     "created_at": "Kreiran",
     "role": "Rola",
     "notes": "Napomena",
+    "create": "Napravi novi",
+    "edit": "Promjeni",
 
+    "name": "Name",
+    "name2": "Name",
     "first_name": "Ime",
     "last_name": "Prezime",
     "middle_name": "Ime oca",
@@ -52,6 +57,14 @@
     "language_en": "Engleski",
     "language_hr": "Croatian",
     "language": "Jezik | Jezici",
+
+    "domain": "Internet domen",
+    "trial_period_end_date": "Datum isteka probnog perioda",
+    "database": "Baza podataka",
+    "server": "Poslužitelj",
+    "database_server": "Poslužitelj baze podataka",
+    "caching_server": "Caching server",
+    "timezone": "Vremenska zona",
 
     "last": "Posljednji"
 }
