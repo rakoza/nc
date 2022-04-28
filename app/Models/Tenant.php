@@ -21,10 +21,11 @@ class Tenant extends Model
         'notes',
         'is_active',
         'trial_period_end_date',
-        'db_server',
+        'src', // verzija aplikacije
+        'db_host',
         'db_username',
         'db_password',
-        'redis_server',
+        'redis_host',
         'timezone',
         // 'user_uid',
         // 'user_gid',

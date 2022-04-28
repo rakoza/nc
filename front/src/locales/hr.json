@@ -65,6 +65,7 @@
     "database_server": "Poslužitelj baze podataka",
     "caching_server": "Caching server",
     "timezone": "Vremenska zona",
+    "version": "Verzija",
 
     "last": "Posljednji"
 }

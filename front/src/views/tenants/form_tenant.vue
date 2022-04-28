@@ -76,15 +76,15 @@
             </div>
 
             <div class="column">
-                <!-- db_server -->
+                <!-- db_host -->
                 <b-field
                     class="required"
                     :label="$t('database_server')"
-                    :type="form.hasError('db_server')"
-                    :message="form.errorMessage('db_server')">
+                    :type="form.hasError('db_host')"
+                    :message="form.errorMessage('db_host')">
                     <b-input
-                        v-model="form.db_server"
-                        name="db_server"
+                        v-model="form.db_host"
+                        name="db_host"
                         :placeholder="$t('database_server')">
                     </b-input>
                 </b-field>
@@ -115,15 +115,15 @@
                     </b-input>
                 </b-field>
 
-                <!-- redis_server -->
+                <!-- redis_host -->
                 <b-field
                     class="required"
                     :label="$t('caching_server')"
-                    :type="form.hasError('redis_server')"
-                    :message="form.errorMessage('redis_server')">
+                    :type="form.hasError('redis_host')"
+                    :message="form.errorMessage('redis_host')">
                     <b-input
-                        v-model="form.redis_server"
-                        name="redis_server"
+                        v-model="form.redis_host"
+                        name="redis_host"
                         :placeholder="$t('caching_server')">
                     </b-input>
                 </b-field>
@@ -138,6 +138,19 @@
                         v-model="form.timezone"
                         name="timezone"
                         :placeholder="$t('timezone')">
+                    </b-input>
+                </b-field>
+
+                <!-- src -->
+                <b-field
+                    class="required"
+                    :label="$t('version')"
+                    :type="form.hasError('src')"
+                    :message="form.errorMessage('src')">
+                    <b-input
+                        v-model="form.src"
+                        name="src"
+                        :placeholder="$t('version')">
                     </b-input>
                 </b-field>
 
@@ -210,11 +223,12 @@ export default {
                     'notes',
                     'is_active',
                     'trial_period_end_date',
-                    'db_server',
+                    'db_host',
                     'db_username',
                     'db_password',
-                    'redis_server',
+                    'redis_host',
                     'timezone',
+                    'src',
                 ]);
 
                 this.form.setData(item)

@@ -1,9 +1,9 @@
 <?php
 
 return [
+    'path' => env('TENANTS_PATH'),
 
-    'db_server' => env('TENANTS_DB_SERVER', 'localhost'),
-    'redis_server' => env('TENANTS_REDIS_SERVER', 'localhost'),
+    'db_host' => env('TENANTS_DB_HOST', 'host.docker.internal'),
+    'redis_host' => env('TENANTS_REDIS_HOST', 'host.docker.internal'),
     'timezone' => env('TENANTS_TIMEZONE', 'UTC'),
-
 ];

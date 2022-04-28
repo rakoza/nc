@@ -24,11 +24,13 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->date('trial_period_end_date')->nullable();
 
-            $table->string('db_server');
+            $table->string('src'); // verzija aplikacije
+
+            $table->string('db_host');
             $table->string('db_username');
             $table->string('db_password');
 
-            $table->string('redis_server');
+            $table->string('redis_host');
 
             $table->string('timezone');
 

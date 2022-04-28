@@ -65,6 +65,7 @@
     "database_server": "Database server",
     "caching_server": "Caching server",
     "timezone": "Timezone",
+    "version": "Version",
 
     "last": "Last"
 }

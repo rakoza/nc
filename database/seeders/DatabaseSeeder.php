@@ -21,5 +21,8 @@ class DatabaseSeeder extends Seeder
 
         // And then we are initializing first user and assign him admin role
         $this->call(UserSeeder::class);
+
+        // Seed tenants
+        $this->call(TenantSeeder::class);
     }
 }
