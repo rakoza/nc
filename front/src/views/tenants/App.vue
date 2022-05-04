@@ -7,7 +7,7 @@
                 <span class="is-size-5 has-text-primary" v-if="subtitle">{{ subtitle }}</span>
                 <!-- Kreiranje novog korisnika -->
                 <b-button
-                    v-if="!showForm"
+                    v-if="!(showForm || showDetails)"
                     @click="createTenant"
                     type="is-primary"
                     icon-pack="fas"
@@ -33,9 +33,16 @@
                 @data-saved="reloadData()"
                 />
 
+            <details-tenant
+                v-else-if="showDetails"
+                @close="closeForm()"
+                @data-saved="reloadData()"
+                />
+
             <table-tenants
                 v-else
                 :tenants="tenants"
+                @show-tenant="showTenant"
                 @edit-tenant="editTenant"
                 />
         </section>
@@ -47,11 +54,13 @@
 
 import TableTenants from './table_tenants'
 import FormTenant from './form_tenant'
+import DetailsTenant from './details_tenant'
 
 export default {
     components: {
         TableTenants,
         FormTenant,
+        DetailsTenant,
     },
 
     data() {
@@ -62,7 +71,7 @@ export default {
 
     computed: {
         title() {
-            return this.showForm
+            return this.showForm || this.showDetails
                 ? this.$tc('tenant')
                 : this.$tc('tenant', 2)
         },
@@ -82,6 +91,9 @@ export default {
         },
         showForm() {
             return ['create','edit'].includes(this.$route.query.form)
+        },
+        showDetails() {
+            return ['show'].includes(this.$route.query.form)
         },
         formMode() {
             return this.$route.query.form
@@ -126,6 +138,16 @@ export default {
                 name: 'tenants',
                 query: {
                     form: 'edit',
+                    id: tenant.id,
+                }
+            })
+        },
+        showTenant(tenant)
+        {
+            this.$router.push({
+                name: 'tenants',
+                query: {
+                    form: 'show',
                     id: tenant.id,
                 }
             })

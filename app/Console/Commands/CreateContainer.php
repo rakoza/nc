@@ -51,6 +51,8 @@ class CreateContainer extends Command
         $this->createStorageFolder($tenant->id);
         $this->copyDockerComposeFile($tenant->id);
         $this->createEnvFile($tenant);
+        $this->createMysqlDatabaseUserAndGrantPrivilegies($tenant);
+        $this->runDockerContainer($tenant);
 
         return 0;
     }
@@ -204,6 +206,55 @@ class CreateContainer extends Command
         $targetEnv = str_replace($search, $replace, $originEnv);
 
         $result = file_put_contents($tenantPath . '/.env', $targetEnv);
+
+        if($result === false) {
+            $this->error('error occurred');
+        } else {
+            $this->info('done');
+        }
+    }
+
+    /**
+     * Create mysql user
+     *
+     * @param  Tenant $tenant [description]
+     * @return [type]         [description]
+     */
+    protected function createMysqlDatabaseUserAndGrantPrivilegies(Tenant $tenant)
+    {
+        $this->line('5. setup mysql');
+
+        $username = $tenant->db_username;
+        $password = $tenant->db_password;
+        $database = 'tenant_' . $tenant->id;
+
+        try {
+            \DB::statement("CREATE DATABASE IF NOT EXISTS $database");
+            \DB::statement("CREATE USER IF NOT EXISTS '$username' IDENTIFIED BY '$password'");
+            \DB::statement("GRANT ALL ON $database.* TO $username");
+
+            $this->info('done');
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+    }
+
+    /**
+     * Run docker container
+     *
+     * @param  Tenant $tenant [description]
+     * @return [type]         [description]
+     */
+    protected function runDockerContainer(Tenant $tenant)
+    {
+        $this->line('6. run docker container');
+
+        $path = config('tenants.path');
+        $user = 'client' . $tenant->id;
+        $tenantPath = sprintf('%s/%s', $path, $user);
+
+        exec("cd $tenantPath && docker-compose up -d", $output, $result);
 
         if($result === false) {
             $this->error('error occurred');

@@ -7,9 +7,9 @@
             <th style="width: 250px;">{{ $t('name') }}</th>
             <th style="width: 150px;">{{ $t('domain') }}</th>
             <th>{{ $t('notes') }}</th>
-            <th style="width: 120px;" class="has-text-right">{{ $t('trial_period_end_date') }}</th>
+            <th class="has-text-right">{{ $t('trial_period_end_date') }}</th>
             <th style="width: 90px;" class="has-text-right">{{ $t('is_active') }}</th>
-            <th></th>
+            <th style="width: 150px;"></th>
         </thead>
 
         <tbody>
@@ -25,15 +25,25 @@
                     >
                     {{ item.is_active ? 'Da' : 'Ne' }}
                 </td>
-                <td>
+                <td class="py-1">
                     <div class="is-flex is-flex-wrap-nowrap is-justify-content-flex-end">
                         <!-- Edit -->
                         <b-button
+                            size="is-small is-rounded is-lowercase"
+                            @click="$emit('show-tenant', item)"
+                            type="is-light"
+                            icon-pack="fas"
+                            icon-right="link">
+                            {{ $t('details') }}
+                        </b-button>
+                        <!-- Edit -->
+                        <b-button
+                            size="is-small is-rounded is-lowercase"
                             @click="$emit('edit-tenant', item)"
-                            type="is-primary"
+                            type="is-primary is-light"
                             icon-pack="fas"
                             icon-right="edit">
-                            <!-- {{ $t('edit') }} -->
+                            {{ $t('edit') }}
                         </b-button>
                     </div>
                 </td>
@@ -47,6 +57,5 @@
 
 export default {
     props: ['tenants'],
-
 }
 </script>

@@ -37,9 +37,10 @@
     "notes": "Napomena",
     "create": "Napravi novi",
     "edit": "Promjeni",
+    "details": "Detalji",
 
-    "name": "Name",
-    "name2": "Name",
+    "name": "Ime",
+    "name2": "Naziv",
     "first_name": "Ime",
     "last_name": "Prezime",
     "middle_name": "Ime oca",
