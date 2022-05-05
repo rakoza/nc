@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DockerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TenantController;
@@ -17,3 +18,5 @@ Route::put('update-user-password/{user}', [HomeController::class, 'updateUserPas
 
 Route::apiResource('tenants', TenantController::class);
 
+Route::get('docker/containers', [DockerController::class, 'getContainers']);
+Route::get('docker/container/{tenant}', [DockerController::class, 'getContainer']);
