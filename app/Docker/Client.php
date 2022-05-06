@@ -36,4 +36,38 @@ class Client extends GuzzleClient
         return $response->getBody();
     }
 
+    /**
+     * Start docker container
+     *
+     * @param  string $id
+     * @return int
+     * 204 no error
+     * 304 container already started
+     * 404 no such container
+     * 500 server error
+     */
+    public function startContainer(string $id)
+    {
+        $response = $this->post("/containers/{$id}/start");
+
+        return $response->getStatusCode();
+    }
+
+    /**
+     * Stop docker container
+     *
+     * @param  string $id
+     * @return int
+     * 204 no error
+     * 304 container already stopped
+     * 404 no such container
+     * 500 server error
+     */
+    public function stopContainer(string $id)
+    {
+        $response = $this->post("/containers/{$id}/stop");
+
+        return $response->getStatusCode();
+    }
+
 }

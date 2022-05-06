@@ -74,6 +74,12 @@ const tenants = {
     delete: (id) => http.delete(`tenants/${id}`),
 }
 
+const docker = {
+    tenant: (id) => http.get(`docker/container/${id}`),
+    startContainer: (containerId) => http.post(`docker/container/${containerId}/start`),
+    stopContainer: (containerId) => http.post(`docker/container/${containerId}/stop`),
+}
+
 /* ---------------------------------------------------------
  * JS Module export
  * ---------------------------------------------------------
@@ -83,4 +89,5 @@ export default {
     profile,
     users,
     tenants,
+    docker,
 }

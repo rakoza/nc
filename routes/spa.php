@@ -20,3 +20,5 @@ Route::apiResource('tenants', TenantController::class);
 
 Route::get('docker/containers', [DockerController::class, 'getContainers']);
 Route::get('docker/container/{tenant}', [DockerController::class, 'getContainer']);
+Route::post('docker/container/{containerId}/start', [DockerController::class, 'startContainer']);
+Route::post('docker/container/{containerId}/stop', [DockerController::class, 'stopContainer']);

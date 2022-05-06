@@ -38,6 +38,9 @@
     "create": "Create a new one",
     "edit": "Edit",
     "details": "Details",
+    "start": "Start",
+    "stop": "Stop",
+    "status": "Status",
 
     "name": "Name",
     "name2": "Name",
@@ -67,6 +70,7 @@
     "caching_server": "Caching server",
     "timezone": "Timezone",
     "version": "Version",
+    "docker_container": "Docker container",
 
     "last": "Last"
 }

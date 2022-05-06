@@ -8,14 +8,23 @@ use Illuminate\Http\Request;
 
 class DockerController extends Controller
 {
+
+    /**
+     * Init docker client
+     */
+    public function __construct()
+    {
+        $this->client = new DockerClient();
+    }
+
     /**
      * Get all docker containers
      *
      * @return \Illuminate\Http\Response
      */
-    public function getContainers(DockerClient $client)
+    public function getContainers()
     {
-        $containers = $client->getAllContainers();
+        $containers = $this->client->getAllContainers();
 
         // return collect($containers)->map(fn($item) => $item->Names[0]);
         return collect(json_decode($containers))->map(function($item) {
@@ -33,17 +42,39 @@ class DockerController extends Controller
      * Get container basic info
      *
      * @param  Tenant       $tenant [description]
-     * @param  DockerClient $client [description]
-     * @return [type]               [description]
+     * @return \Illuminate\Http\Response
      */
-    public function getContainer(Tenant $tenant, DockerClient $client)
+    public function getContainer(Tenant $tenant)
     {
-        $containers = $this->getContainers($client);
+        $containers = $this->getContainers();
+
         $containerName = sprintf("client%d_app_1", $tenant->id);
 
         $container = collect($containers)->firstWhere('name', $containerName);
 
         return $container;
+    }
+
+    /**
+     * Start container
+     *
+     * @param  int $containerId
+     * @return \Illuminate\Http\Response
+     */
+    public function startContainer(string $containerId)
+    {
+        return $this->client->startContainer($containerId);
+    }
+
+    /**
+     * Stop container
+     *
+     * @param  int $containerId
+     * @return \Illuminate\Http\Response
+     */
+    public function stopContainer(string $containerId)
+    {
+        return $this->client->stopContainer($containerId);
     }
 
 }

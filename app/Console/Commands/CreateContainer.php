@@ -52,7 +52,7 @@ class CreateContainer extends Command
         $this->copyDockerComposeFile($tenant->id);
         $this->createEnvFile($tenant);
         $this->createMysqlDatabaseUserAndGrantPrivilegies($tenant);
-        $this->runDockerContainer($tenant);
+        $this->createDockerContainer($tenant);
 
         return 0;
     }
@@ -241,20 +241,20 @@ class CreateContainer extends Command
     }
 
     /**
-     * Run docker container
+     * Create docker container
      *
      * @param  Tenant $tenant [description]
      * @return [type]         [description]
      */
-    protected function runDockerContainer(Tenant $tenant)
+    protected function createDockerContainer(Tenant $tenant)
     {
-        $this->line('6. run docker container');
+        $this->line('6. create docker container');
 
         $path = config('tenants.path');
         $user = 'client' . $tenant->id;
         $tenantPath = sprintf('%s/%s', $path, $user);
 
-        exec("cd $tenantPath && docker-compose up -d", $output, $result);
+        exec("cd $tenantPath && docker-compose up --no-start", $output, $result);
 
         if($result === false) {
             $this->error('error occurred');

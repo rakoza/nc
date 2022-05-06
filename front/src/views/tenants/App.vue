@@ -1,53 +1,23 @@
 <template>
-    <div>
-        <!-- Header -->
-        <page-header :title="title" :subtitle2="subtitle">
-            <!-- Buttons -->
-            <div class="level-item buttons">
-                <span class="is-size-5 has-text-primary" v-if="subtitle">{{ subtitle }}</span>
-                <!-- Kreiranje novog korisnika -->
-                <b-button
-                    v-if="!(showForm || showDetails)"
-                    @click="createTenant"
-                    type="is-primary"
-                    icon-pack="fas"
-                    icon-right="user-plus">
-                    {{ $t('create') }}
-                </b-button>
-                <b-button
-                    v-if="showForm && formMode === 'edit'"
-                    @click="deleteTenant"
-                    type="is-danger"
-                    icon-pack="fas"
-                    icon-right="trash">
-                    {{ $t('delete') }}
-                </b-button>
-            </div>
-        </page-header>
+    <form-tenant
+        v-if="showForm"
+        @close="closeForm()"
+        @data-saved="reloadData()"
+        />
 
-        <section class="section">
-            <form-tenant
-                v-if="showForm"
-                :formMode="formMode"
-                @close="closeForm()"
-                @data-saved="reloadData()"
-                />
+    <details-tenant
+        v-else-if="showDetails"
+        @close="closeForm()"
+        @data-saved="reloadData()"
+        />
 
-            <details-tenant
-                v-else-if="showDetails"
-                @close="closeForm()"
-                @data-saved="reloadData()"
-                />
-
-            <table-tenants
-                v-else
-                :tenants="tenants"
-                @show-tenant="showTenant"
-                @edit-tenant="editTenant"
-                />
-        </section>
-
-    </div>
+    <table-tenants
+        v-else
+        :tenants="tenants"
+        @create-tenant="createTenant"
+        @show-tenant="showTenant"
+        @edit-tenant="editTenant"
+        />
 </template>
 
 <script>
@@ -70,21 +40,6 @@ export default {
     },
 
     computed: {
-        title() {
-            return this.showForm || this.showDetails
-                ? this.$tc('tenant')
-                : this.$tc('tenant', 2)
-        },
-        subtitle() {
-            if(!this.showForm) {
-                return
-            }
-
-            return this.formMode === 'create'
-                ? this.$tc('create')
-                // : this.$tc('edit')
-                : ''
-        },
         isAdmin() {
             // return appconfig.userRole === 'administrator'
             return true
@@ -95,9 +50,6 @@ export default {
         showDetails() {
             return ['show'].includes(this.$route.query.form)
         },
-        formMode() {
-            return this.$route.query.form
-        }
     },
 
     created() {
@@ -152,21 +104,6 @@ export default {
                 }
             })
         },
-        deleteTenant()
-        {
-            const id = this.$route.query.id
-
-            this.$api.tenants.delete(id)
-                .then(() => {
-                    this.$notify('Zakupac je izbrisan', 'is-success')
-                    this.reloadData()
-                    this.closeForm()
-                })
-                .catch(error => {
-                    this.$alertError(error.message);
-                    throw error
-                })
-        }
     },
 };
 </script>

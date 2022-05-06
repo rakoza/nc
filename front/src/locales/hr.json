@@ -38,6 +38,9 @@
     "create": "Napravi novi",
     "edit": "Promjeni",
     "details": "Detalji",
+    "start": "Start",
+    "stop": "Stop",
+    "status": "Status",
 
     "name": "Ime",
     "name2": "Naziv",
@@ -67,6 +70,7 @@
     "caching_server": "Caching server",
     "timezone": "Vremenska zona",
     "version": "Verzija",
+    "docker_container": "Docker container",
 
     "last": "Posljednji"
 }
