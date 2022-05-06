@@ -41,6 +41,7 @@
     "start": "Start",
     "stop": "Stop",
     "status": "Status",
+    "destroy": "Destroy",
 
     "name": "Name",
     "name2": "Name",
@@ -71,6 +72,8 @@
     "timezone": "Timezone",
     "version": "Version",
     "docker_container": "Docker container",
+    "create_docker_container": "Create docker container",
+    "remove_docker_confirmation": "Confirm that you want to remove docker container",
 
     "last": "Last"
 }

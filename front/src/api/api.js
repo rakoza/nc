@@ -78,6 +78,7 @@ const docker = {
     tenant: (id) => http.get(`docker/container/${id}`),
     startContainer: (containerId) => http.post(`docker/container/${containerId}/start`),
     stopContainer: (containerId) => http.post(`docker/container/${containerId}/stop`),
+    removeContainer: (containerId) => http.delete(`docker/container/${containerId}/remove`),
 }
 
 /* ---------------------------------------------------------

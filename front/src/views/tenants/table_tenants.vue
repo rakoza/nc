@@ -19,9 +19,9 @@
                 <table class="table is-fullwidth is-hoverable">
                     <thead>
                         <th style="width: 30px;"></th>
-                        <th style="width: 250px;">{{ $t('email_address') }}</th>
-                        <th style="width: 250px;">{{ $t('name') }}</th>
                         <th style="width: 150px;">{{ $t('domain') }}</th>
+                        <th style="width: 250px;">{{ $t('name') }}</th>
+                        <th style="width: 250px;">{{ $t('email_address') }}</th>
                         <th>{{ $t('notes') }}</th>
                         <th class="has-text-right">{{ $t('trial_period_end_date') }}</th>
                         <th style="width: 90px;" class="has-text-right">{{ $t('is_active') }}</th>
@@ -31,14 +31,14 @@
                     <tbody>
                         <tr v-for="(item,index) in tenants" :key="index">
                             <td>{{ index + 1 }}.</td>
-                            <td>{{ item.email }}</td>
-                            <td>{{ item.name }}</td>
                             <td>
                                 <a :href="'http://' + item.domain" target="_blank">
                                     {{ item.domain }}
                                     <i class="fas fa-link"></i>
                                 </a>
                             </td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.email }}</td>
                             <td>{{ item.notes }}</td>
                             <td class="has-text-right">{{ item.trial_period_end_date | dd_mm_yyyy }}</td>
                             <td class="has-text-right"

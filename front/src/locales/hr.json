@@ -23,8 +23,8 @@
     "full_address": "Adresa - Ulica, Grad, Država",
     "address": "Adresa",
     "write_something_about_yourself": "Napiši nešto o sebi",
-    "yes": "Yes",
-    "no": "No",
+    "yes": "Da",
+    "no": "Ne",
     "yes_delete_account": "Da, izbriši nalog",
     "delete_account_confirmation_statement": "Potvrdite da želite izbrisati vaš korisnički nalog!",
     "current_password": "Tekuća lozinka",
@@ -41,6 +41,7 @@
     "start": "Start",
     "stop": "Stop",
     "status": "Status",
+    "destroy": "Uništi",
 
     "name": "Ime",
     "name2": "Naziv",
@@ -71,6 +72,8 @@
     "timezone": "Vremenska zona",
     "version": "Verzija",
     "docker_container": "Docker container",
+    "create_docker_container": "Napravite docker kontejner",
+    "remove_docker_confirmation": "Potvrdite da želite ukloniti docker kontejner",
 
     "last": "Posljednji"
 }

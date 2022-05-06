@@ -22,3 +22,4 @@ Route::get('docker/containers', [DockerController::class, 'getContainers']);
 Route::get('docker/container/{tenant}', [DockerController::class, 'getContainer']);
 Route::post('docker/container/{containerId}/start', [DockerController::class, 'startContainer']);
 Route::post('docker/container/{containerId}/stop', [DockerController::class, 'stopContainer']);
+Route::delete('docker/container/{containerId}/remove', [DockerController::class, 'removeContainer']);

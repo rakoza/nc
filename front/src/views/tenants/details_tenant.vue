@@ -4,15 +4,34 @@
         <page-header :title="$tc('tenant')" :subtitle="$t('details')">
             <!-- Buttons -->
             <div class="level-item buttons" v-if="!isLoading.docker">
-                <b-button
-                    v-if="docker.state !== 'running'"
-                    @click="startContainer"
-                    type="is-success"
-                    icon-pack="fas"
-                    icon-right="play"
-                    :loading="isLoading.start">
-                    {{ $t('start') }}
-                </b-button>
+                <template v-if="ifContainerIsNotCreated">
+                    <b-button
+                        @click="createContainer"
+                        type="is-primary"
+                        icon-pack="fas"
+                        icon-right="cog"
+                        :loading="isLoading.create">
+                        {{ $t('create_docker_container') }}
+                    </b-button>
+                </template>
+                <template v-else-if="docker.state !== 'running'">
+                    <b-button
+                        @click="removeContainer"
+                        type="is-danger is-light"
+                        icon-pack="fas"
+                        icon-right="trash"
+                        :loading="isLoading.remove">
+                        {{ $t('destroy') }}
+                    </b-button>
+                    <b-button
+                        @click="startContainer"
+                        type="is-success"
+                        icon-pack="fas"
+                        icon-right="play"
+                        :loading="isLoading.start">
+                        {{ $t('start') }}
+                    </b-button>
+                </template>
                 <b-button
                     v-else
                     @click="stopContainer"
@@ -89,7 +108,7 @@
                         <div v-else>
                             <!-- name -->
                             <b-field :label="$t('status')">
-                                {{ docker.status }}
+                                {{ docker.status || 'not created'}}
                             </b-field>
                         </div>
 
@@ -140,6 +159,9 @@ export default {
             // return appconfig.userRole === 'administrator'
             return true
         },
+        ifContainerIsNotCreated() {
+            return typeof this.docker.state === 'undefined'
+        },
     },
 
     methods: {
@@ -182,7 +204,7 @@ export default {
             this.isLoading.start = true
 
             this.$api.docker.startContainer(this.docker.id)
-                .then(data => {
+                .then(() => {
                     this.fetchDockerStatus()
                 })
                 .catch(error => {
@@ -198,7 +220,7 @@ export default {
             this.isLoading.stop = true
 
             this.$api.docker.stopContainer(this.docker.id)
-                .then(data => {
+                .then(() => {
                     this.fetchDockerStatus()
                 })
                 .catch(error => {
@@ -208,6 +230,46 @@ export default {
                 .finally(() => {
                     this.isLoading.stop = false
                 });
+        },
+        createContainer()
+        {
+
+        },
+        removeContainer()
+        {
+            const runRemoveContainer = () => {
+
+                this.isLoading.remove = true
+
+                this.$api.docker.removeContainer(this.docker.id)
+                    .then(() => {
+                        this.$buefy.toast.open({
+                            duration: 3000,
+                            message: 'Docker kontejner je izbrisan',
+                            type: 'is-danger',
+                            queue: false
+                        })
+
+                        this.fetchDockerStatus()
+                    })
+                    .catch(error => {
+                        this.$alertError(error.message);
+                        // throw error
+                    })
+                    .finally(() => {
+                        this.isLoading.remove = false
+                    });
+            }
+
+            this.$buefy.dialog.confirm({
+                title: this.$t('destroy'),
+                message: this.$t('remove_docker_confirmation'),
+                confirmText: this.$t('yes'),
+                cancelText: this.$t('cancel'),
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: () => runRemoveContainer()
+            })
         },
     }
 

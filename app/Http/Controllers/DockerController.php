@@ -77,4 +77,15 @@ class DockerController extends Controller
         return $this->client->stopContainer($containerId);
     }
 
+    /**
+     * Remove container
+     *
+     * @param  int $containerId
+     * @return \Illuminate\Http\Response
+     */
+    public function removeContainer(string $containerId)
+    {
+        return $this->client->removeContainer($containerId);
+    }
+
 }

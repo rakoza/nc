@@ -70,4 +70,22 @@ class Client extends GuzzleClient
         return $response->getStatusCode();
     }
 
+    /**
+     * Remove docker container
+     *
+     * @param  string $id
+     * @return int
+     * 204 no error
+     * 400 bad parameter
+     * 404 no such container
+     * 409 conflict
+     * 500 server error
+     */
+    public function removeContainer(string $id)
+    {
+        $response = $this->delete("/containers/{$id}");
+
+        return $response->getStatusCode();
+    }
+
 }
