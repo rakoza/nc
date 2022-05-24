@@ -68,7 +68,7 @@
                         <div class="mt-3" v-else>
                             <table class="table is-size-6">
                                 <tbody>
-                                    <tr v-for="item in containers">
+                                    <tr v-for="item in containers" :key="item.id">
                                         <td>{{ item.name }}</td>
                                         <td :class="{'has-text-danger': item.state !== 'running', 'has-text-success': item.state === 'running'}">
                                             {{ item.state }}

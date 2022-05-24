@@ -46,4 +46,30 @@ class HomeController extends Controller
         return compact('user');
     }
 
+    /**
+     * Get app versions
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getVersions()
+    {
+        $appsPath = config('tenants.path') . '/apps';
+        $appsList = scandir($appsPath);
+
+        return array_values(array_filter($appsList, fn($item) => is_dir($appsPath . '/' . $item) && $item !== '.' && $item !== '..'));
+    }
+
+    /**
+     * Get Linux timezones
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getTimezones()
+    {
+        $output = null;
+        $retval = null;
+        exec('timedatectl list-timezones', $output, $retval);
+
+        return $output;
+    }
 }

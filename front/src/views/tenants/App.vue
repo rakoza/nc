@@ -57,8 +57,7 @@ export default {
     },
 
     methods: {
-        reloadData()
-        {
+        reloadData() {
             this.$api.tenants.all()
                 .then(data => {
                     this.tenants = data.tenants
@@ -71,12 +70,10 @@ export default {
                     // this.isLoading = false
                 });
         },
-        closeForm()
-        {
+        closeForm() {
             this.$router.go(-1)
         },
-        createTenant()
-        {
+        createTenant() {
             this.$router.push({
                 name: 'tenants',
                 query: {
@@ -84,8 +81,7 @@ export default {
                 }
             })
         },
-        editTenant(tenant)
-        {
+        editTenant(tenant) {
             this.$router.push({
                 name: 'tenants',
                 query: {
@@ -94,8 +90,7 @@ export default {
                 }
             })
         },
-        showTenant(tenant)
-        {
+        showTenant(tenant) {
             this.$router.push({
                 name: 'tenants',
                 query: {

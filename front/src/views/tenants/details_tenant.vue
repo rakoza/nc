@@ -172,7 +172,7 @@ export default {
                 .then(({tenant}) => {
                     this.tenant = tenant
 
-                    this.fetchDockerStatus()
+                    this.fetchContainer()
                 })
                 .catch(error => {
                     this.$alertError(error.message);
@@ -182,7 +182,7 @@ export default {
                     this.isLoading.tenant = false
                 });
         },
-        fetchDockerStatus() {
+        fetchContainer() {
             const id = this.$route.query.id
 
             this.$api.docker.tenant(id)
@@ -202,7 +202,7 @@ export default {
 
             this.$api.docker.startContainer(this.docker.id)
                 .then(() => {
-                    this.fetchDockerStatus()
+                    this.fetchContainer()
                 })
                 .catch(error => {
                     this.$alertError(error.message);
@@ -217,7 +217,7 @@ export default {
 
             this.$api.docker.stopContainer(this.docker.id)
                 .then(() => {
-                    this.fetchDockerStatus()
+                    this.fetchContainer()
                 })
                 .catch(error => {
                     this.$alertError(error.message);
@@ -244,7 +244,7 @@ export default {
                             queue: false
                         })
 
-                        this.fetchDockerStatus()
+                        this.fetchContainer()
                     })
                     .catch(error => {
                         this.$alertError(error.message);

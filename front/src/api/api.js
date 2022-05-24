@@ -57,6 +57,8 @@ const app = {
             'Content-Type': 'multipart/form-data'
         },
     }),
+    getVersions: () => http.get('app/versions'),
+    getTimezones: () => http.get('app/timezones'),
 }
 
 const profile = {

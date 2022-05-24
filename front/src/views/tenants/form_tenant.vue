@@ -151,11 +151,14 @@
                                 :label="$t('timezone')"
                                 :type="form.hasError('timezone')"
                                 :message="form.errorMessage('timezone')">
-                                <b-input
-                                    v-model="form.timezone"
+                                <b-select
+                                    expanded
                                     name="timezone"
-                                    :placeholder="$t('timezone')">
-                                </b-input>
+                                    v-model="form.timezone">
+                                    <option v-for="item in appTimezones" :key="item" :value="item">
+                                        {{ item }}
+                                    </option>
+                                </b-select>
                             </b-field>
 
                             <!-- src -->
@@ -164,14 +167,17 @@
                                 :label="$t('version')"
                                 :type="form.hasError('src')"
                                 :message="form.errorMessage('src')">
-                                <b-input
-                                    v-model="form.src"
+                                <b-select
+                                    expanded
                                     name="src"
-                                    :placeholder="$t('version')">
-                                </b-input>
+                                    v-model="form.src">
+                                    <option v-for="item in appVersions" :key="item" :value="item">
+                                        {{ item }}
+                                    </option>
+                                </b-select>
                             </b-field>
 
-
+                            <!-- trial_period_end_date -->
                             <b-field
                                 :label="$t('trial_period_end_date')"
                                 :type="form.hasError('trial_period_end_date')"
@@ -221,45 +227,22 @@ export default {
 
         return {
             form,
+            appVersions: [],
+            appTimezones: [],
             isLoading: true,
         }
     },
 
     created() {
+        this.fetchVersions()
+        this.fetchTimezones()
+
         if(this.formMode !== 'edit') {
             this.isLoading = false
             return
         }
 
-        const id = this.$route.query.id
-
-        this.$api.tenants.get(id)
-            .then(({tenant}) => {
-                const item = this.$pick(tenant, [
-                    'name',
-                    'email',
-                    'domain',
-                    'notes',
-                    'is_active',
-                    'trial_period_end_date',
-                    'db_host',
-                    'db_username',
-                    'db_password',
-                    'redis_host',
-                    'timezone',
-                    'src',
-                ]);
-
-                this.form.setData(item)
-                // this.$forceUpdate()
-            })
-            .catch(error => {
-                this.$alertError(error.message);
-                throw error
-            })
-            .finally(() => {
-                this.isLoading = false
-            });
+        this.fetchTenant()
     },
 
     computed: {
@@ -278,8 +261,64 @@ export default {
     },
 
     methods: {
-        submit()
-        {
+        fetchTenant() {
+            const id = this.$route.query.id
+
+            this.$api.tenants.get(id)
+                .then(({tenant}) => {
+                    const item = this.$pick(tenant, [
+                        'name',
+                        'email',
+                        'domain',
+                        'notes',
+                        'is_active',
+                        'trial_period_end_date',
+                        'db_host',
+                        'db_username',
+                        'db_password',
+                        'redis_host',
+                        'timezone',
+                        'src',
+                    ]);
+
+                    this.form.setData(item)
+                    // this.$forceUpdate()
+                })
+                .catch(error => {
+                    this.$alertError(error.message);
+                    throw error
+                })
+                .finally(() => {
+                    this.isLoading = false
+                });
+        },
+        fetchVersions() {
+            this.$api.app.getVersions()
+                .then(data => {
+                    this.appVersions = data
+                })
+                .catch(error => {
+                    this.$alertError(error.message);
+                    throw error
+                })
+                .finally(() => {
+                    // this.isLoading = false
+                });
+        },
+        fetchTimezones() {
+            this.$api.app.getTimezones()
+                .then(data => {
+                    this.appTimezones = data
+                })
+                .catch(error => {
+                    this.$alertError(error.message);
+                    throw error
+                })
+                .finally(() => {
+                    // this.isLoading = false
+                });
+        },
+        submit() {
             const url = this.formMode === 'create'
                 ? '/tenants'
                 : '/tenants/' + this.$route.query.id
@@ -297,8 +336,7 @@ export default {
                 })
                 .catch(() => {})
         },
-        deleteTenant()
-        {
+        deleteTenant() {
             const id = this.$route.query.id
 
             this.$api.tenants.delete(id)
