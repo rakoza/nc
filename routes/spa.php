@@ -18,6 +18,8 @@ Route::put('update-user-password/{user}', [HomeController::class, 'updateUserPas
 
 Route::apiResource('tenants', TenantController::class);
 
+Route::get('docker/status', [DockerController::class, 'getStatus']);
+Route::get('docker/nginx', [DockerController::class, 'getNginxContainer']);
 Route::get('docker/containers', [DockerController::class, 'getContainers']);
 Route::get('docker/container/{tenant}', [DockerController::class, 'getContainer']);
 Route::post('docker/container/{containerId}/start', [DockerController::class, 'startContainer']);

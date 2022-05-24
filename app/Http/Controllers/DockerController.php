@@ -18,6 +18,54 @@ class DockerController extends Controller
     }
 
     /**
+     * Get docker service status
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getStatus()
+    {
+        try {
+            return $this->client->getStatus();
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Get Nginx container status
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getNginxContainer()
+    {
+        try {
+            $containers = $this->client->getAllContainers();
+
+            return collect(json_decode($containers))
+                ->where('Image', 'nginxproxy/nginx-proxy:alpine')
+                ->map(function($item) {
+                    return [
+                        'id' => $item->Id,
+                        'state' => $item->State,
+                        'status' => $item->Status,
+                    ];
+                })
+                ->firstOrFail();
+
+        } catch (\Illuminate\Support\ItemNotFoundException $e) {
+            return [
+                'state' => 'unknown',
+                'status' => 'Nginx container does not exist.',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'state' => 'unknown',
+                'status' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Get all docker containers
      *
      * @return \Illuminate\Http\Response
@@ -27,15 +75,17 @@ class DockerController extends Controller
         $containers = $this->client->getAllContainers();
 
         // return collect($containers)->map(fn($item) => $item->Names[0]);
-        return collect(json_decode($containers))->map(function($item) {
-            return [
-                'id' => $item->Id,
-                'name' => trim($item->Names[0], '/'),
-                'image' => $item->Image,
-                'state' => $item->State,
-                'status' => $item->Status,
-            ];
-        });
+        return collect(json_decode($containers))
+            ->where('Image', '!=', 'nginxproxy/nginx-proxy:alpine')
+            ->map(function($item) {
+                return [
+                    'id' => $item->Id,
+                    'name' => trim($item->Names[0], '/'),
+                    'image' => $item->Image,
+                    'state' => $item->State,
+                    'status' => $item->Status,
+                ];
+            });
     }
 
     /**

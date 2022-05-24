@@ -25,13 +25,25 @@ class Client extends GuzzleClient
     }
 
     /**
+     * Get docker service status
+     *
+     * @return [type] [description]
+     */
+    public function getStatus()
+    {
+        $response = $this->get('/containers/json');
+
+        return $response->getStatusCode();
+    }
+
+    /**
      * Get docker containers
      *
      * @return [type] [description]
      */
-    public function getAllContainers()
+    public function getAllContainers($all = true, string $filter = null)
     {
-        $response = $this->get('/containers/json?all=true');
+        $response = $this->get('/containers/json?all=' . ($all ? 'true': 'false'));
 
         return $response->getBody();
     }

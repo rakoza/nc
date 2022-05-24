@@ -75,6 +75,9 @@ const tenants = {
 }
 
 const docker = {
+    status: () => http.get('docker/status'),
+    nginx: () => http.get(`docker/nginx`),
+    containers: () => http.get(`docker/containers`),
     tenant: (id) => http.get(`docker/container/${id}`),
     startContainer: (containerId) => http.post(`docker/container/${containerId}/start`),
     stopContainer: (containerId) => http.post(`docker/container/${containerId}/stop`),

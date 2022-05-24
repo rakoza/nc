@@ -107,7 +107,7 @@
                         <div v-if="isLoading.docker">...</div>
                         <div v-else>
                             <!-- name -->
-                            <b-field :label="$t('status')">
+                            <b-field :label="$t('status')" :class="{'has-text-danger': docker.state !== 'running', 'has-text-success': docker.state === 'running'}">
                                 {{ docker.status || 'not created'}}
                             </b-field>
                         </div>
@@ -165,8 +165,7 @@ export default {
     },
 
     methods: {
-        getTenantDetails()
-        {
+        getTenantDetails() {
             const id = this.$route.query.id
 
             this.$api.tenants.get(id)
@@ -183,8 +182,7 @@ export default {
                     this.isLoading.tenant = false
                 });
         },
-        fetchDockerStatus()
-        {
+        fetchDockerStatus() {
             const id = this.$route.query.id
 
             this.$api.docker.tenant(id)
@@ -199,8 +197,7 @@ export default {
                     this.isLoading.docker = false
                 });
         },
-        startContainer()
-        {
+        startContainer() {
             this.isLoading.start = true
 
             this.$api.docker.startContainer(this.docker.id)
@@ -215,8 +212,7 @@ export default {
                     this.isLoading.start = false
                 });
         },
-        stopContainer()
-        {
+        stopContainer() {
             this.isLoading.stop = true
 
             this.$api.docker.stopContainer(this.docker.id)
@@ -231,12 +227,10 @@ export default {
                     this.isLoading.stop = false
                 });
         },
-        createContainer()
-        {
+        createContainer() {
 
         },
-        removeContainer()
-        {
+        removeContainer() {
             const runRemoveContainer = () => {
 
                 this.isLoading.remove = true
