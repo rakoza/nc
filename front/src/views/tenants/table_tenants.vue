@@ -23,6 +23,7 @@
                         <th style="width: 250px;">{{ $t('name') }}</th>
                         <th style="width: 250px;">{{ $t('email_address') }}</th>
                         <th>{{ $t('notes') }}</th>
+                        <th class="has-text-right">{{ $t('status') }}</th>
                         <th class="has-text-right">{{ $t('trial_period_end_date') }}</th>
                         <th style="width: 90px;" class="has-text-right">{{ $t('is_active') }}</th>
                         <th style="width: 150px;"></th>
@@ -40,7 +41,12 @@
                             <td>{{ item.name }}</td>
                             <td>{{ item.email }}</td>
                             <td>{{ item.notes }}</td>
-                            <td class="has-text-right">{{ item.trial_period_end_date | dd_mm_yyyy }}</td>
+                            <td class="has-text-right">
+                                 {{ containerStatus(item.id) }}
+                            </td>
+                            <td class="has-text-right">
+                                {{ item.trial_period_end_date | dd_mm_yyyy }}
+                            </td>
                             <td class="has-text-right"
                                 :class="{'has-text-danger has-text-weight-bold': !item.is_active}"
                                 >
@@ -53,8 +59,9 @@
                                         size="is-small is-rounded is-lowercase"
                                         @click="$emit('show-tenant', item)"
                                         type="is-light"
+                                        :class="{'is-success': isRunning(item.id, 'running'), 'is-danger': isRunning(item.id, 'exited'),}"
                                         icon-pack="fas"
-                                        icon-right="traffic-light">
+                                        icon-right="link">
                                         {{ $t('details') }}
                                     </b-button>
                                     <!-- Edit -->
@@ -79,6 +86,25 @@
 <script>
 
 export default {
-    props: ['tenants'],
+    props: ['tenants', 'containers'],
+
+    methods: {
+        isRunning(tenantId, state) {
+            const container = this.containers.find(item => item.name === 'client' + tenantId + '_app_1')
+            if(container) {
+                return container.state === state
+            }
+
+            return false
+        },
+        containerStatus(tenantId) {
+            const container = this.containers.find(item => item.name === 'client' + tenantId + '_app_1')
+            if(container) {
+                return container.status
+            }
+
+            return 'Not created'
+        },
+    }
 }
 </script>

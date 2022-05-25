@@ -23,7 +23,7 @@
                     <div class="column">
                         <h1>1. Docker service</h1>
                         <b-icon icon="sync-alt" custom-class="fa-spin" v-if="isLoading.docker"></b-icon>
-                        <div :class="{'has-text-danger': status.docker !== 200, 'has-text-success': status.docker === 200}" v-else>
+                        <div class="mt-3" :class="{'has-text-danger': status.docker !== 200, 'has-text-success': status.docker === 200}" v-else>
                             Docker service is {{ status.docker === 200 ? 'Up' : 'Down' }}
                         </div>
                         <div class="is-size-7 mt-3 is-italic" v-if="status.docker !== 200">
@@ -37,7 +37,7 @@
                     <div class="column">
                         <h1>2. Nginx docker container</h1>
                         <b-icon icon="sync-alt" custom-class="fa-spin" v-if="isLoading.nginx"></b-icon>
-                        <div :class="{'has-text-danger': status.nginx.state !== 'running', 'has-text-success': status.nginx.state === 'running'}" v-else>
+                        <div class="mt-3" :class="{'has-text-danger': status.nginx.state !== 'running', 'has-text-success': status.nginx.state === 'running'}" v-else>
                             {{ status.nginx.status }}
                         </div>
                         <div class="mt-3" v-if="status.nginx.state !== 'unknown'">
@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="column">
-                        <h1>3. Other docker containers</h1>
+                        <h1>3. Tenant docker containers</h1>
                         <b-icon icon="sync-alt" custom-class="fa-spin" v-if="isLoading.containers"></b-icon>
                         <div class="mt-3" v-else>
                             <table class="table is-size-6">
@@ -152,7 +152,8 @@ export default {
 
             this.$api.docker.containers()
                 .then(data => {
-                    this.containers = data
+                    const pattern = /client[0-9]+_app_1/
+                    this.containers = data.filter(item => pattern.test(item.name) )
                 })
                 .catch(error => {
                     this.$alertError(error.message);

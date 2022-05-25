@@ -14,6 +14,7 @@
     <table-tenants
         v-else
         :tenants="tenants"
+        :containers="containers"
         @create-tenant="createTenant"
         @show-tenant="showTenant"
         @edit-tenant="editTenant"
@@ -36,6 +37,7 @@ export default {
     data() {
         return {
             tenants: [],
+            containers: [],
         }
     },
 
@@ -54,6 +56,7 @@ export default {
 
     created() {
         this.reloadData()
+        this.fetchContainers()
     },
 
     methods: {
@@ -68,6 +71,21 @@ export default {
                 })
                 .finally(() => {
                     // this.isLoading = false
+                });
+        },
+        fetchContainers() {
+            // this.isLoading.containers = true
+
+            this.$api.docker.containers()
+                .then(data => {
+                    this.containers = data
+                })
+                .catch(error => {
+                    this.$alertError(error.message);
+                    throw error
+                })
+                .finally(() => {
+                    // this.isLoading.containers = false
                 });
         },
         closeForm() {

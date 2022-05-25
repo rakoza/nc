@@ -86,7 +86,8 @@ class DockerController extends Controller
                     'state' => $item->State,
                     'status' => $item->Status,
                 ];
-            });
+            })
+            ->values();
     }
 
     /**
