@@ -19,7 +19,7 @@
                 <table class="table is-fullwidth is-hoverable">
                     <thead>
                         <th style="width: 30px;"></th>
-                        <th style="width: 150px;">{{ $t('domain') }}</th>
+                        <th style="width: 200px;">{{ $t('domain') }}</th>
                         <th style="width: 250px;">{{ $t('name') }}</th>
                         <th style="width: 250px;">{{ $t('email_address') }}</th>
                         <th>{{ $t('notes') }}</th>
@@ -34,7 +34,7 @@
                             <td>
                                 <a :href="'http://' + item.domain" target="_blank">
                                     {{ item.domain }}
-                                    <i class="fas fa-link"></i>
+                                    <i class="fas fa-external-link"></i>
                                 </a>
                             </td>
                             <td>{{ item.name }}</td>

@@ -24,7 +24,16 @@ class HomeController extends Controller
      */
     public function check()
     {
-        return Auth::user();
+        return [
+            'user' => Auth::user(),
+            'config' => [
+                'db_host' => config('tenants.db_host'),
+                'redis_host' => config('tenants.redis_host'),
+                'timezone' => config('tenants.timezone'),
+                'versions' => $this->getVersions(),
+                'timezones' => $this->getTimezones(),
+            ]
+        ];
     }
 
     /**
@@ -72,4 +81,5 @@ class HomeController extends Controller
 
         return $output;
     }
+
 }

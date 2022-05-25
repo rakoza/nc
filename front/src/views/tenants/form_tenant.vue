@@ -155,7 +155,7 @@
                                     expanded
                                     name="timezone"
                                     v-model="form.timezone">
-                                    <option v-for="item in appTimezones" :key="item" :value="item">
+                                    <option v-for="item in config.timezones" :key="item" :value="item">
                                         {{ item }}
                                     </option>
                                 </b-select>
@@ -171,7 +171,7 @@
                                     expanded
                                     name="src"
                                     v-model="form.src">
-                                    <option v-for="item in appVersions" :key="item" :value="item">
+                                    <option v-for="item in config.versions" :key="item" :value="item">
                                         {{ item }}
                                     </option>
                                 </b-select>
@@ -218,7 +218,22 @@ export default {
     props: [],
 
     data() {
+        const {db_host, timezone, redis_host} = this.$store.getters['auth/config']
+
+        const randomString = () => { // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
+          return Math.random().toString(36).slice(2)
+        }
+
+        const randomIntFromInterval = (min, max) => { // min and max included
+          return Math.floor(Math.random() * (max - min + 1) + min)
+        }
+
         let item = {
+            db_username: 'user' + randomIntFromInterval(100000, 999999),
+            db_password: randomString(),
+            db_host,
+            redis_host,
+            timezone,
             is_active: 1,
             trial_period_end_date: null,
         };
@@ -227,15 +242,11 @@ export default {
 
         return {
             form,
-            appVersions: [],
-            appTimezones: [],
             isLoading: true,
         }
     },
 
     created() {
-        this.fetchVersions()
-        this.fetchTimezones()
 
         if(this.formMode !== 'edit') {
             this.isLoading = false
@@ -257,6 +268,9 @@ export default {
         isAdmin() {
             // return appconfig.userRole === 'administrator'
             return true
+        },
+        config() {
+            return this.$store.getters['auth/config']
         },
     },
 
@@ -290,32 +304,6 @@ export default {
                 })
                 .finally(() => {
                     this.isLoading = false
-                });
-        },
-        fetchVersions() {
-            this.$api.app.getVersions()
-                .then(data => {
-                    this.appVersions = data
-                })
-                .catch(error => {
-                    this.$alertError(error.message);
-                    throw error
-                })
-                .finally(() => {
-                    // this.isLoading = false
-                });
-        },
-        fetchTimezones() {
-            this.$api.app.getTimezones()
-                .then(data => {
-                    this.appTimezones = data
-                })
-                .catch(error => {
-                    this.$alertError(error.message);
-                    throw error
-                })
-                .finally(() => {
-                    // this.isLoading = false
                 });
         },
         submit() {

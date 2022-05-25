@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTenantRequest extends FormRequest
 {
@@ -32,7 +33,16 @@ class StoreTenantRequest extends FormRequest
             'trial_period_end_date' => 'nullable|date',
             'src' => 'required|string',
             'db_host' => 'required|string',
-            'db_username' => 'required|string',
+            'db_username' => [
+                'required',
+                'string',
+                Rule::unique('tenants')->where(function ($query) {
+                    return $query
+                        ->where('db_host', $this->db_host)
+                        ->where('db_username', $this->db_username);
+                })
+                ->ignore(optional($this->tenant)->id),
+            ],
             'db_password' => 'required|string',
             'redis_host' => 'required|string',
             'timezone' => 'required|string',

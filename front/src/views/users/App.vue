@@ -45,27 +45,29 @@
                             <td class="has-text-right"
                                 :class="{'has-text-danger has-text-weight-bold': !item.is_active}"
                                 v-if="isAdmin">{{ item.is_active ? 'Da' : 'Ne' }}</td>
-                            <td>
+                            <td class="py-1">
                                 <div class="is-flex is-flex-wrap-nowrap is-justify-content-flex-end">
                                     <!-- Promjena lozinke -->
                                     <b-button
                                         v-if="isAdmin"
+                                        size="is-small is-rounded is-lowercase"
                                         @click="changePassword(item)"
                                         class="mr-2"
-                                        type="is-primary"
+                                        type="is-primary is-light"
                                         icon-pack="fas"
                                         icon-right="key">
-                                        <!-- {{ $t('change_password') }} -->
+                                        {{ $t('change_password') }}
                                     </b-button>
 
                                     <!-- Promjena lozinke -->
                                     <b-button
                                         v-if="isAdmin"
+                                        size="is-small is-rounded is-lowercase"
                                         @click="editUser(item)"
-                                        type="is-primary"
+                                        type="is-primary is-light"
                                         icon-pack="fas"
                                         icon-right="edit">
-                                        <!-- {{ $t('edit') }} -->
+                                        {{ $t('edit') }}
                                     </b-button>
                                 </div>
                             </td>

@@ -15,8 +15,8 @@ Route::put('pass', [ProfileController::class, 'storenewpass']);
 // place for protected routes, API routes for SPA
 Route::apiResource('users', UserController::class);
 Route::put('update-user-password/{user}', [HomeController::class, 'updateUserPassword']);
-Route::get('app/versions', [HomeController::class, 'getVersions']);
-Route::get('app/timezones', [HomeController::class, 'getTimezones']);
+// Route::get('app/versions', [HomeController::class, 'getVersions']);
+// Route::get('app/timezones', [HomeController::class, 'getTimezones']);
 
 Route::apiResource('tenants', TenantController::class);
 
