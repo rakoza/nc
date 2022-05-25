@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Docker\Client as DockerClient;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class DockerController extends Controller
 {
@@ -91,7 +92,7 @@ class DockerController extends Controller
     /**
      * Get container basic info
      *
-     * @param  Tenant       $tenant [description]
+     * @param  Tenant $tenant
      * @return \Illuminate\Http\Response
      */
     public function getContainer(Tenant $tenant)
@@ -103,6 +104,23 @@ class DockerController extends Controller
         $container = collect($containers)->firstWhere('name', $containerName);
 
         return $container;
+    }
+
+    /**
+     * Create container
+     *
+     * @param  Tenant $tenant
+     * @return \Illuminate\Http\Response
+     */
+    public function createContainer(Tenant $tenant)
+    {
+        $exitCode = Artisan::call('nc:create-container', [
+            'id' => $tenant->id
+        ]);
+
+        return $exitCode === 0
+            ? 'Tenant container created'
+            : abort(500, 'Fail while creating docker container.');
     }
 
     /**

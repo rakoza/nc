@@ -53,6 +53,7 @@
                         <!-- name -->
                         <b-field :label="$t('name2')">
                             {{ tenant.name }}
+                            <span class="is-size-7 has-text-grey">(id: {{ tenant.id }})</span>
                         </b-field>
                         <!-- email -->
                         <b-field :label="$t('email_address')">
@@ -143,6 +144,7 @@ export default {
                 docker: true,
                 start: false,
                 stop: false,
+                create: false,
             },
             docker: {
                 status: 'unknown',
@@ -228,7 +230,19 @@ export default {
                 });
         },
         createContainer() {
+            this.isLoading.create = true
 
+            this.$api.docker.createContainer(this.tenant.id)
+                .then(() => {
+                    this.fetchContainer()
+                })
+                .catch(error => {
+                    this.$alertError(error.message);
+                    throw error
+                })
+                .finally(() => {
+                    this.isLoading.create = false
+                });
         },
         removeContainer() {
             const runRemoveContainer = () => {

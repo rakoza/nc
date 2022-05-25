@@ -82,6 +82,7 @@ const docker = {
     nginx: () => http.get(`docker/nginx`),
     containers: () => http.get(`docker/containers`),
     tenant: (id) => http.get(`docker/container/${id}`),
+    createContainer: (tenantId) => http.post(`docker/container/${tenantId}/create`),
     startContainer: (containerId) => http.post(`docker/container/${containerId}/start`),
     stopContainer: (containerId) => http.post(`docker/container/${containerId}/stop`),
     removeContainer: (containerId) => http.delete(`docker/container/${containerId}/remove`),

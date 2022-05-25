@@ -54,7 +54,7 @@
                                         @click="$emit('show-tenant', item)"
                                         type="is-light"
                                         icon-pack="fas"
-                                        icon-right="link">
+                                        icon-right="traffic-light">
                                         {{ $t('details') }}
                                     </b-button>
                                     <!-- Edit -->
