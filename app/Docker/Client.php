@@ -3,14 +3,12 @@
 namespace App\Docker;
 
 use GuzzleHttp\Client as GuzzleClient;
-use Illuminate\Http\Request;
 
 class Client extends GuzzleClient
 {
 
     /**
-     * [__construct description]
-     * @param array $config [description]
+     * Inicijalizujemo http client sa zadatim podesavanjima
      */
     public function __construct()
     {
@@ -21,7 +19,7 @@ class Client extends GuzzleClient
             ]
         ];
 
-        parent::__construct($options);
+        $this->client = new GuzzleClient($options);
     }
 
     /**
@@ -31,7 +29,9 @@ class Client extends GuzzleClient
      */
     public function getStatus()
     {
-        $response = $this->get('/containers/json');
+        $response = $this
+            ->client
+            ->get('/containers/json');
 
         return $response->getStatusCode();
     }
@@ -43,7 +43,9 @@ class Client extends GuzzleClient
      */
     public function getAllContainers($all = true, string $filter = null)
     {
-        $response = $this->get('/containers/json?all=' . ($all ? 'true': 'false'));
+        $response = $this
+            ->client
+            ->get('/containers/json?all=' . ($all ? 'true': 'false'));
 
         return $response->getBody();
     }
@@ -60,7 +62,9 @@ class Client extends GuzzleClient
      */
     public function startContainer(string $id)
     {
-        $response = $this->post("/containers/{$id}/start");
+        $response = $this
+            ->client
+            ->post("/containers/{$id}/start");
 
         return $response->getStatusCode();
     }
@@ -77,7 +81,9 @@ class Client extends GuzzleClient
      */
     public function stopContainer(string $id)
     {
-        $response = $this->post("/containers/{$id}/stop");
+        $response = $this
+            ->client
+            ->post("/containers/{$id}/stop");
 
         return $response->getStatusCode();
     }
@@ -95,7 +101,9 @@ class Client extends GuzzleClient
      */
     public function removeContainer(string $id)
     {
-        $response = $this->delete("/containers/{$id}");
+        $response = $this
+            ->client
+            ->delete("/containers/{$id}");
 
         return $response->getStatusCode();
     }
