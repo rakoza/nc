@@ -4,7 +4,7 @@
         <page-header :title="$tc('tenant')" :subtitle="$t('details')">
             <!-- Buttons -->
             <div class="level-item buttons" v-if="!isLoading.docker">
-                <template v-if="ifContainerIsNotCreated">
+                <!-- <template v-if="ifContainerIsNotCreated">
                     <b-button
                         @click="createContainer"
                         type="is-primary"
@@ -40,7 +40,7 @@
                     icon-right="stop"
                     :loading="isLoading.stop">
                     {{ $t('stop') }}
-                </b-button>
+                </b-button> -->
             </div>
         </page-header>
 
@@ -50,6 +50,10 @@
 
                 <div class="columns">
                     <div class="column">
+                        <div class="is-size-5 has-text-grey-light mb-3">
+                            <i class="fas fa-user"></i>
+                            Tenant
+                        </div>
                         <!-- name -->
                         <b-field :label="$t('name2')">
                             {{ tenant.name }}
@@ -60,12 +64,12 @@
                             {{ tenant.email }}
                         </b-field>
                         <!-- domain -->
-                        <b-field :label="$t('domain')">
+                        <!-- <b-field :label="$t('domain')">
                             <a :href="'http://' + tenant.domain" target="_blank">
                                 {{ tenant.domain }}
                                 <i class="fas fa-link"></i>
                             </a>
-                        </b-field>
+                        </b-field> -->
                         <!-- notes -->
                         <b-field :label="$t('notes')">
                             {{ tenant.notes }}
@@ -75,17 +79,17 @@
                             {{ tenant.is_active ? $t('yes') : $t('no') }}
                         </b-field>
                         <!-- db_host -->
-                        <b-field :label="$t('database_server')">
+                        <!-- <b-field :label="$t('database_server')">
                             {{ tenant.db_host }}
-                        </b-field>
+                        </b-field> -->
                         <!-- db_username -->
-                        <b-field :label="$t('username')">
+                        <!-- <b-field :label="$t('username')">
                             {{ tenant.db_username }}
-                        </b-field>
+                        </b-field> -->
                         <!-- db_password -->
-                        <b-field :label="$t('password')">
+                        <!-- <b-field :label="$t('password')">
                             {{ tenant.db_password }}
-                        </b-field>
+                        </b-field> -->
                         <!-- redis_host -->
                         <b-field :label="$t('caching_server')">
                             {{ tenant.redis_host }}
@@ -104,15 +108,104 @@
                         </b-field>
                     </div>
 
+                    <!-- domain -->
                     <div class="column">
+                        <div class="is-size-5 has-text-grey-light mb-3">
+                            <i class="fab fa-docker"></i>
+                            Docker container
+                        </div>
                         <div v-if="isLoading.docker">...</div>
                         <div v-else>
                             <!-- name -->
                             <b-field :label="$t('status')" :class="{'has-text-danger': docker.state !== 'running', 'has-text-success': docker.state === 'running'}">
                                 {{ docker.status || 'not created'}}
                             </b-field>
+                            <!-- docker buttons -->
+                            <div class="buttons">
+                                <template v-if="ifContainerIsNotCreated">
+                                    <b-button
+                                        @click="createContainer"
+                                        type="is-primary"
+                                        size="is-small is-rounded"
+                                        icon-pack="fas"
+                                        icon-right="cog"
+                                        :loading="isLoading.create">
+                                        {{ $t('create_docker_container') }}
+                                    </b-button>
+                                </template>
+                                <template v-else-if="docker.state !== 'running'">
+                                    <b-button
+                                        @click="removeContainer"
+                                        type="is-danger is-light"
+                                        size="is-small is-rounded"
+                                        icon-pack="fas"
+                                        icon-right="trash"
+                                        :loading="isLoading.remove">
+                                        {{ $t('destroy') }}
+                                    </b-button>
+                                    <b-button
+                                        @click="startContainer"
+                                        type="is-success"
+                                        size="is-small is-rounded"
+                                        icon-pack="fas"
+                                        icon-right="play"
+                                        :loading="isLoading.start">
+                                        {{ $t('start') }}
+                                    </b-button>
+                                </template>
+                                <b-button
+                                    v-else
+                                    @click="stopContainer"
+                                    type="is-danger"
+                                    size="is-small is-rounded"
+                                    icon-pack="fas"
+                                    icon-right="stop"
+                                    :loading="isLoading.stop">
+                                    {{ $t('stop') }}
+                                </b-button>
+                            </div>
                         </div>
+                    </div>
 
+                    <!-- database -->
+                    <div class="column">
+                        <div class="is-size-5 has-text-grey-light mb-3">
+                            <i class="fas fa-database"></i>
+                            Database
+                        </div>
+                        <!-- db_host -->
+                        <b-field :label="$t('database_server')">
+                            {{ tenant.db_host }}
+                        </b-field>
+                        <!-- db_username -->
+                        <b-field :label="$t('username')">
+                            {{ tenant.db_username }}
+                        </b-field>
+                        <!-- db_password -->
+                        <b-field :label="$t('password')">
+                            {{ tenant.db_password }}
+                        </b-field>
+                    </div>
+
+                    <!-- internet domain -->
+                    <div class="column">
+                        <div class="is-size-5 has-text-grey-light mb-3">
+                            <i class="fas fa-globe"></i>
+                            Internet domain
+                        </div>
+                        <b-field :label="$t('domain')">
+                            <a :href="'http://' + tenant.domain" target="_blank">
+                                {{ tenant.domain }}
+                                <i class="fas fa-link"></i>
+                            </a>
+                        </b-field>
+                        <div v-if="isLoading.domain">...</div>
+                        <div v-else>
+                            <!-- name -->
+                            <b-field :label="$t('status')" :class="{'has-text-danger': domain.status !== 'ok', 'has-text-success': docker.status === 'ok'}">
+                                {{ domain.error || 'OK' }}
+                            </b-field>
+                        </div>
                     </div>
 
                 </div>
@@ -145,9 +238,14 @@ export default {
                 start: false,
                 stop: false,
                 create: false,
+                domain: false,
             },
             docker: {
                 status: 'unknown',
+            },
+            domain: {
+                status: 'unknown',
+                error: null,
             },
         }
     },
@@ -175,6 +273,7 @@ export default {
                     this.tenant = tenant
 
                     this.fetchContainer()
+                    this.fetchDomainRecord()
                 })
                 .catch(error => {
                     this.$alertError(error.message);
@@ -279,6 +378,26 @@ export default {
                 onConfirm: () => runRemoveContainer()
             })
         },
+        fetchDomainRecord()
+        {
+            this.isLoading.domain = true
+
+            this.$api.digitalocean.domain(this.tenant.domain)
+                .then(data => {
+                    console.log(data)
+                    this.domain = {
+                        status: 'ok',
+                        error: data.error
+                    }
+                })
+                .catch(error => {
+                    this.$alertError(error.message);
+                    throw error
+                })
+                .finally(() => {
+                    this.isLoading.domain = false
+                });
+        }
     }
 
 };

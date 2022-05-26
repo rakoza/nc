@@ -31,6 +31,20 @@ class Client
     }
 
     /**
+     * Retrieve an existing domain
+     *
+     * @return string
+     */
+    public function getDomain($domain)
+    {
+        $response = $this
+            ->client
+            ->get("domains/$domain");
+
+        return $response->getBody();
+    }
+
+    /**
      * Add personal domain
      *
      * @return [type] [description]

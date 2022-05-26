@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DigitalOceanController;
 use App\Http\Controllers\DockerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -28,3 +29,5 @@ Route::post('docker/container/{tenant}/create', [DockerController::class, 'creat
 Route::post('docker/container/{containerId}/start', [DockerController::class, 'startContainer']);
 Route::post('docker/container/{containerId}/stop', [DockerController::class, 'stopContainer']);
 Route::delete('docker/container/{containerId}/remove', [DockerController::class, 'removeContainer']);
+
+Route::get('digitalocean/domain/{domain}', [DigitalOceanController::class, 'getDomain']);

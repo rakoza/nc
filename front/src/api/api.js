@@ -88,6 +88,10 @@ const docker = {
     removeContainer: (containerId) => http.delete(`docker/container/${containerId}/remove`),
 }
 
+const digitalocean = {
+    domain: (domain) => http.get(`digitalocean/domain/${domain}`),
+}
+
 /* ---------------------------------------------------------
  * JS Module export
  * ---------------------------------------------------------
@@ -98,4 +102,5 @@ export default {
     users,
     tenants,
     docker,
+    digitalocean,
 }
