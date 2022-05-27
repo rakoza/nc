@@ -30,4 +30,5 @@ Route::post('docker/container/{containerId}/start', [DockerController::class, 's
 Route::post('docker/container/{containerId}/stop', [DockerController::class, 'stopContainer']);
 Route::delete('docker/container/{containerId}/remove', [DockerController::class, 'removeContainer']);
 
-Route::get('digitalocean/domain/{domain}', [DigitalOceanController::class, 'getDomain']);
+Route::get('digitalocean/domain/{tenant}', [DigitalOceanController::class, 'getDomainDetails']);
+Route::post('digitalocean/domain/{tenant}', [DigitalOceanController::class, 'createDomain']);

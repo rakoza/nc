@@ -45,7 +45,7 @@
         </page-header>
 
         <section class="section">
-            <div v-if="isLoading.tenant">...</div>
+            <b-icon icon="sync-alt" custom-class="fa-spin" v-if="isLoading.tenant"></b-icon>
             <div class="container" v-else>
 
                 <div class="columns">
@@ -114,7 +114,7 @@
                             <i class="fab fa-docker"></i>
                             Docker container
                         </div>
-                        <div v-if="isLoading.docker">...</div>
+                        <b-icon icon="sync-alt" custom-class="fa-spin" v-if="isLoading.docker"></b-icon>
                         <div v-else>
                             <!-- name -->
                             <b-field :label="$t('status')" :class="{'has-text-danger': docker.state !== 'running', 'has-text-success': docker.state === 'running'}">
@@ -199,12 +199,30 @@
                                 <i class="fas fa-link"></i>
                             </a>
                         </b-field>
-                        <div v-if="isLoading.domain">...</div>
+                        <b-icon icon="sync-alt" custom-class="fa-spin" v-if="isLoading.domain"></b-icon>
                         <div v-else>
                             <!-- name -->
-                            <b-field :label="$t('status')" :class="{'has-text-danger': domain.status !== 'ok', 'has-text-success': docker.status === 'ok'}">
-                                {{ domain.error || 'OK' }}
+                            <b-field :label="$t('status')">
+                                <div class="has-text-danger" v-if="domain.status !== 'ok'">
+                                    {{ domain.error_message }}
+                                </div>
+                                <div v-else>
+                                    <div class="has-text-success has-text-weight-bold">OK</div>
+                                    <div class="is-size-7">name: {{ domain.record.domain.name }}</div>
+                                    <div class="is-size-7">ttl: {{ domain.record.domain.ttl }}</div>
+                                    <!-- <div class="is-size-7">zone file: {{ domain.record.domain.zone_file }}</div> -->
+                                </div>
                             </b-field>
+                            <b-button
+                                v-if="domain.status !== 'ok' && domain.error_id === 'not_found'"
+                                @click="createDomain"
+                                type="is-primary is-light"
+                                size="is-small is-rounded"
+                                icon-pack="fas"
+                                icon-right="plus"
+                                :loading="isLoading.createDomain">
+                                {{ $t('create') }}
+                            </b-button>
                         </div>
                     </div>
 
@@ -239,12 +257,14 @@ export default {
                 stop: false,
                 create: false,
                 domain: false,
+                createDomain: false,
             },
             docker: {
                 status: 'unknown',
             },
             domain: {
                 status: 'unknown',
+                data: null,
                 error: null,
             },
         }
@@ -382,13 +402,13 @@ export default {
         {
             this.isLoading.domain = true
 
-            this.$api.digitalocean.domain(this.tenant.domain)
+            this.$api.digitalocean.domain(this.tenant.id)
                 .then(data => {
-                    console.log(data)
-                    this.domain = {
-                        status: 'ok',
-                        error: data.error
-                    }
+                    // console.log(data)
+
+                    // primjer - greska
+                    // {"status":"error","error_id":"not_found","error_message":"The resource you were accessing could not be found."}
+                    this.domain = data
                 })
                 .catch(error => {
                     this.$alertError(error.message);
@@ -396,6 +416,23 @@ export default {
                 })
                 .finally(() => {
                     this.isLoading.domain = false
+                });
+        },
+        createDomain()
+        {
+            this.isLoading.createDomain = true
+
+            this.$api.digitalocean.createDomain(this.tenant.id)
+                .then(() => {
+                    // console.log(data)
+                    this.fetchDomainRecord()
+                })
+                .catch(error => {
+                    this.$alertError(error.message);
+                    throw error
+                })
+                .finally(() => {
+                    this.isLoading.createDomain = false
                 });
         }
     }

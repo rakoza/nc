@@ -30,6 +30,7 @@ class HomeController extends Controller
                 'db_host' => config('tenants.db_host'),
                 'redis_host' => config('tenants.redis_host'),
                 'timezone' => config('tenants.timezone'),
+                'domain' => config('digitalocean.app_domain'),
                 'versions' => $this->getVersions(),
                 'timezones' => $this->getTimezones(),
             ]

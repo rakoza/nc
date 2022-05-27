@@ -89,7 +89,8 @@ const docker = {
 }
 
 const digitalocean = {
-    domain: (domain) => http.get(`digitalocean/domain/${domain}`),
+    domain: (tenant) => http.get(`digitalocean/domain/${tenant}`),
+    createDomain: (tenant) => http.post(`digitalocean/domain/${tenant}`),
 }
 
 /* ---------------------------------------------------------

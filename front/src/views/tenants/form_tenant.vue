@@ -52,14 +52,25 @@
 
                             <!-- domain -->
                             <b-field
-                                :label="$t('domain')"
+                                :label="domainLabel"
                                 :type="form.hasError('domain')"
                                 :message="form.errorMessage('domain')">
                                 <b-input
-                                    v-model="form.domain"
+                                    expanded
+                                    v-model="domain"
                                     name="domain"
                                     :placeholder="$t('domain')">
                                 </b-input>
+                                <p class="has-background-light is-flex is-align-items-center" v-if="isSubdomain">
+                                    <span class="is-static mx-3 has-text-weight-bold">.{{ config.domain }}</span>
+                                </p>
+                            </b-field>
+
+                            <!-- domain or subdomain -->
+                            <b-field>
+                                <b-checkbox v-model="theCustomersOwnDomain" type="is-warning">
+                                    Check only if you want to use the costumer's own domain
+                                </b-checkbox>
                             </b-field>
 
                             <!-- notes -->
@@ -243,6 +254,8 @@ export default {
         return {
             form,
             isLoading: true,
+            theCustomersOwnDomain: false,
+            domain: null, // domain or subdomain
         }
     },
 
@@ -269,6 +282,14 @@ export default {
             // return appconfig.userRole === 'administrator'
             return true
         },
+        isSubdomain() {
+            return !this.theCustomersOwnDomain
+        },
+        domainLabel() {
+            return this.theCustomersOwnDomain
+                ? "The customer's own Internet domain"
+                : "Application sub-domain"
+        },
         config() {
             return this.$store.getters['auth/config']
         },
@@ -283,7 +304,7 @@ export default {
                     const item = this.$pick(tenant, [
                         'name',
                         'email',
-                        'domain',
+                        // 'domain',
                         'notes',
                         'is_active',
                         'trial_period_end_date',
@@ -294,6 +315,17 @@ export default {
                         'timezone',
                         'src',
                     ]);
+
+
+                    // ako je unesen "the customer's own domain"
+                    // onda tenant.domain ne sadrzi string this.config.domain
+                    if(tenant.domain.indexOf(this.config.domain) === -1) {
+                        this.domain = tenant.domain
+                        this.theCustomersOwnDomain = true
+                    } else {
+                        // podrazumjeva se upotreba poddomena
+                        this.domain = tenant.domain.slice(0, -(this.config.domain.length+1))
+                    }
 
                     this.form.setData(item)
                     // this.$forceUpdate()
@@ -310,6 +342,10 @@ export default {
             const url = this.formMode === 'create'
                 ? '/tenants'
                 : '/tenants/' + this.$route.query.id
+
+            if(this.isSubdomain) {
+                this.form.domain = this.domain + '.' + this.config.domain
+            }
 
             this.form
                 .submit(this.formMode, url)

@@ -18,22 +18,62 @@ class DigitalOceanController extends Controller
     }
 
     /**
+     * Create domain (or subdomain)
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function createDomain(Tenant $tenant)
+    {
+        $domain = $tenant->domain;
+        $appDomain = '.' . config('digitalocean.app_domain');
+
+        $isSubdomain = str_contains($domain, $appDomain);
+        $subDomain = str_replace($appDomain, '', $tenant->domain);
+
+        if($isSubdomain) {
+            return $this->client->addCnameRecord($appDomain, $subDomain);
+        }
+
+        $this->client->addDomain($domain); // ovo ce kreirati samo NS rekorde
+        return $this->client->addARecord($domain, '@'); // ovo kreira A rekord
+    }
+
+    /**
      * Get docker service status
      *
      * @return \Illuminate\Http\Response
      */
-    public function getDomain(string $domain)
+    public function getDomainDetails(Tenant $tenant)
     {
+        $domain = $tenant->domain;
+        $appDomain = config('digitalocean.app_domain');
+
+        $isSubdomain = str_contains($domain, $appDomain);
+
         try {
 
-            $body = $this->client->getDomain($domain);
+            if($isSubdomain) {
+                $body = $this->client->getCnameRecord($appDomain, $domain);
+            } else {
+                $body = $this->client->getDomain($domain);
+            }
 
-            return json_decode($body);
-
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
             return [
                 'status' => 'ok',
-                'error' => $e->getMessage()
+                'record' => json_decode($body),
+            ];
+
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+
+            $statusCode = $response->getStatusCode();
+            $body = $response->getBody();
+            $error = json_decode($body);
+
+            return [
+                'status' => 'error',
+                'error_id' => $error->id,
+                'error_message' => $error->message,
             ];
         }
     }

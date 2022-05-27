@@ -45,6 +45,25 @@ class Client
     }
 
     /**
+     * Retrieve an CNAME dns record
+     *
+     * @return string
+     */
+    public function getCnameRecord($domain, $subDomain)
+    {
+        $response = $this
+            ->client
+            ->get("domains/$domain", [
+                'query' => [
+                    'name' => $subDomain,
+                    'type' => 'CNAME',
+                ]
+            ]);
+
+        return $response->getBody();
+    }
+
+    /**
      * Add personal domain
      *
      * @return [type] [description]
@@ -64,21 +83,39 @@ class Client
     }
 
     /**
-     * Add subdomain of our app domain
+     * Add CNAME record, subdomain
      *
      * @return [type] [description]
      */
-    public function addSubDomain($sub)
+    public function addCnameRecord($domain, $subDomain)
     {
-        $domain = config('digitalocean.app_domain');
-
         $response = $this
             ->client
             ->post("domains/$domain/records", [
                 'json' => [
                     'type' => 'CNAME',
-                    'name' => $sub,
+                    'name' => $subDomain,
                     'data' => $domain . '.',
+                ],
+            ]);
+
+        return $response->getStatusCode();
+    }
+
+    /**
+     * Add A record, for domain or subdomain
+     *
+     * @return [type] [description]
+     */
+    public function addARecord($domain, $subDomain)
+    {
+        $response = $this
+            ->client
+            ->post("domains/$domain/records", [
+                'json' => [
+                    'type' => 'A',
+                    'name' => $subDomain,
+                    'data' => config('digitalocean.public_ip_address'),
                 ],
             ]);
 

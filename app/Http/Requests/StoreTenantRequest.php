@@ -24,10 +24,16 @@ class StoreTenantRequest extends FormRequest
      */
     public function rules()
     {
+        $tenantId = optional($this->tenant)->id;
+
         return [
             'name' => 'required|string',
             'email' => 'required|email',
-            'domain' => 'required|string',
+            'domain' => [
+                'required',
+                'string',
+                Rule::unique('tenants')->ignore($tenantId),
+            ],
             'notes' => 'nullable|string',
             'is_active' => 'required|boolean',
             'trial_period_end_date' => 'nullable|date',
@@ -38,10 +44,10 @@ class StoreTenantRequest extends FormRequest
                 'string',
                 Rule::unique('tenants')->where(function ($query) {
                     return $query
-                        ->where('db_host', $this->db_host)
-                        ->where('db_username', $this->db_username);
+                        ->where('db_host', $this->db_host);
+                        // ->where('db_username', $this->db_username);
                 })
-                ->ignore(optional($this->tenant)->id),
+                ->ignore($tenantId),
             ],
             'db_password' => 'required|string',
             'redis_host' => 'required|string',
