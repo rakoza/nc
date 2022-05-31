@@ -65,11 +65,16 @@ class CreateContainer extends Command
      */
     protected function createLinuxUser($id)
     {
-        $this->line(sprintf('1. create linux user `client%d`', $id));
-        exec('sudo useradd --no-create-home client' . $id, $output, $result);
+        $newUser = 'client' . $id;
+
+        $this->line(sprintf('1. create linux user `%s`', $newUser));
+        exec('sudo useradd --no-create-home ' . $newUser, $output, $result);
 
         if($result > 0) {
             $this->warn('error: ' . $result);
+
+            throw new \Exception("error", "Error creating new user `$newUser`");
+
         } else {
             $this->info('done');
         }
