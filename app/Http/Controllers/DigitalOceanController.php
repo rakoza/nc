@@ -25,9 +25,9 @@ class DigitalOceanController extends Controller
     public function createDomain(Tenant $tenant)
     {
         $domain = $tenant->domain;
-        $appDomain = '.' . config('digitalocean.app_domain');
+        $appDomain = config('digitalocean.app_domain');
 
-        $isSubdomain = str_contains($domain, $appDomain);
+        $isSubdomain = str_contains($domain, '.' . $appDomain);
         $subDomain = str_replace($appDomain, '', $tenant->domain);
 
         if($isSubdomain) {
@@ -57,21 +57,32 @@ class DigitalOceanController extends Controller
 
                 $response = json_decode($body);
 
+                // prilagodjavamo format front-u
                 if($response->meta->total == 0) {
                     return [
                         'status' => 'error',
                         'error_id' => 'not_found',
                         'error_message' => 'CNAME record not found',
                     ];
+                } else {
+                    return [
+                        'status' => 'ok',
+                        'record' => [
+                            'domain' => [
+                                'name' => $response->domain_records[0]->name,
+                                'ttl' => $response->domain_records[0]->ttl,
+                            ]
+                        ],
+                    ];
                 }
             } else {
                 $body = $this->client->getDomain($domain);
-            }
 
-            return [
-                'status' => 'ok',
-                'record' => json_decode($body),
-            ];
+                return [
+                    'status' => 'ok',
+                    'record' => json_decode($body),
+                ];
+            }
 
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $response = $e->getResponse();
