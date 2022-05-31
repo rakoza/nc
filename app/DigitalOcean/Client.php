@@ -53,7 +53,7 @@ class Client
     {
         $response = $this
             ->client
-            ->get("domains/$domain", [
+            ->get("domains/$domain/records", [
                 'query' => [
                     'name' => $subDomain,
                     'type' => 'CNAME',
