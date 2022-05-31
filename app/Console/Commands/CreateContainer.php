@@ -49,7 +49,9 @@ class CreateContainer extends Command
 
         $this->line(sprintf('Start creating docker container for tenant `%s`', $tenant->name));
 
-        $this->createLinuxUser($tenant->id);
+        if ($this->ifLinuxUserNotExists()) {
+            $this->createLinuxUser($tenant->id);
+        }
 
         $uid = $this->getLinuxUserUID();
         $gid = $this->getLinuxUserGID();
@@ -101,6 +103,19 @@ class CreateContainer extends Command
         } else {
             $this->info('done');
         }
+    }
+
+    /**
+     * Get true if linux user with the name `$this->linuxUser` not exists
+     *
+     * @return [type] [description
+     */
+    protected function ifLinuxUserNotExists()
+    {
+        exec('id -u ' . $this->linuxUser, $output, $result);
+
+        // ($result > 0) ako takav korisnik ne postoji
+        return $result > 0;
     }
 
     /**
