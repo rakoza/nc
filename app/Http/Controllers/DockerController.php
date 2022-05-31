@@ -115,13 +115,9 @@ class DockerController extends Controller
      */
     public function createContainer(Tenant $tenant)
     {
-        $exitCode = Artisan::call('nc:create-container', [
+        Artisan::call('nc:create-container', [
             'id' => $tenant->id
         ]);
-
-        return $exitCode === 0
-            ? 'Tenant container created'
-            : abort(500, 'Fail while creating docker container.');
     }
 
     /**

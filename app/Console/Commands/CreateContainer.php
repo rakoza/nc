@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 
 class CreateContainer extends Command
 {
@@ -22,6 +23,13 @@ class CreateContainer extends Command
     protected $description = 'Create docker container for the chosen tenant';
 
     /**
+     * Name of the linux user
+     *
+     * @var string
+     */
+    private $linuxUser;
+
+    /**
      * Execute the console command.
      *
      * @return int
@@ -37,24 +45,35 @@ class CreateContainer extends Command
             return 1;
         }
 
+        $this->linuxUser = 'client' . $tenant->id;
+
         $this->line(sprintf('Start creating docker container for tenant `%s`', $tenant->name));
 
         $this->createLinuxUser($tenant->id);
 
-        $uid = $this->getLinuxUserUID($tenant->id);
-        $gid = $this->getLinuxUserGID($tenant->id);
+        $uid = $this->getLinuxUserUID();
+        $gid = $this->getLinuxUserGID();
 
         $tenant->user_uid = $uid;
         $tenant->user_gid = $gid;
         $tenant->save();
 
-        $this->createStorageFolder($tenant->id);
-        $this->copyDockerComposeFile($tenant->id);
+        $this->createStorageFolder();
+        $this->copyDockerComposeFile();
         $this->createEnvFile($tenant);
         $this->createMysqlDatabaseUserAndGrantPrivilegies($tenant);
         $this->createDockerContainer($tenant);
 
         return 0;
+    }
+
+    /**
+     * Get true if the command is running from the web interface
+     *
+     * @return boolean
+     */
+    protected function inWeb() {
+        return !App::runningInConsole();
     }
 
     /**
@@ -65,15 +84,19 @@ class CreateContainer extends Command
      */
     protected function createLinuxUser($id)
     {
-        $newUser = 'client' . $id;
+        $newUser = $this->linuxUser;
 
         $this->line(sprintf('1. create linux user `%s`', $newUser));
+
         exec('sudo useradd --no-create-home ' . $newUser, $output, $result);
 
         if($result > 0) {
             $this->warn('error: ' . $result);
 
-            throw new \Exception("Error creating new user `$newUser`", 1);
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error creating new user `$newUser`", 1);
+            }
 
         } else {
             $this->info('done');
@@ -83,17 +106,19 @@ class CreateContainer extends Command
     /**
      * Get the user UID
      *
-     * @param  [type] $id
      * @return [type]
      */
-    protected function getLinuxUserUID($id)
+    protected function getLinuxUserUID()
     {
-        exec('id -u client' . $id, $output, $result);
+        exec('id -u ' . $this->linuxUser, $output, $result);
 
         if($result > 0) {
             $this->error('error: ' . $result);
 
-            throw new \Exception("Error getting linux user UID", 1);
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error getting linux user UID", 1);
+            }
         }
 
         return $output[0];
@@ -102,17 +127,19 @@ class CreateContainer extends Command
     /**
      * Get the user GID
      *
-     * @param  [type] $id
      * @return [type]
      */
-    protected function getLinuxUserGID($id)
+    protected function getLinuxUserGID()
     {
-        exec('id -g client' . $id, $output, $result);
+        exec('id -g ' . $this->linuxUser, $output, $result);
 
         if($result > 0) {
             $this->error('error: ' . $result);
 
-            throw new \Exception("Error getting linux user GID", 1);
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error getting linux user GID", 1);
+            }
         }
 
         return $output[0];
@@ -121,13 +148,12 @@ class CreateContainer extends Command
     /**
      * Create folder for the tenant
      *
-     * @param  [type] $id
      * @return [type]
      */
-    protected function createStorageFolder($id)
+    protected function createStorageFolder()
     {
         $path = config('tenants.path');
-        $user = 'client' . $id;
+        $user = $this->linuxUser;
         $storagePath = sprintf('%s/%s/storage', $path, $user);
 
         $this->line(sprintf("2. create folder `$storagePath`"));
@@ -137,6 +163,11 @@ class CreateContainer extends Command
 
         if($result > 0) {
             $this->warn('error: ' . $result);
+
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error creating storage folder `$storagePath`", 1);
+            }
         } else {
             $this->info('done');
         }
@@ -145,13 +176,12 @@ class CreateContainer extends Command
     /**
      * Create docker-composer.yml file in target folder
      *
-     * @param  [type] $id
      * @return [type]
      */
-    protected function copyDockerComposeFile($id)
+    protected function copyDockerComposeFile()
     {
         $path = config('tenants.path');
-        $user = 'client' . $id;
+        $user = $this->linuxUser;
         $tenantPath = sprintf('%s/%s', $path, $user);
         $templatePath = sprintf('%s/container/docker-compose.yml', $path);
 
@@ -161,6 +191,11 @@ class CreateContainer extends Command
 
         if($result > 0) {
             $this->warn('error: ' . $result);
+
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error coping `$templatePath` file to the tenant folder", 1);
+            }
         } else {
             $this->info('done');
         }
@@ -175,7 +210,7 @@ class CreateContainer extends Command
     protected function createEnvFile(Tenant $tenant)
     {
         $path = config('tenants.path');
-        $user = 'client' . $tenant->id;
+        $user = $this->linuxUser;
         $tenantPath = sprintf('%s/%s', $path, $user);
         $envPath = sprintf('%s/container/.env.example', $path);
 
@@ -214,6 +249,11 @@ class CreateContainer extends Command
 
         if($result === false) {
             $this->error('error occurred');
+
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error creating .env file of the tenant", 1);
+            }
         } else {
             $this->info('done');
         }
@@ -242,6 +282,11 @@ class CreateContainer extends Command
 
         } catch (\Exception $e) {
             $this->error($e->getMessage());
+
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error creating MySql database and user of the tenant. " . $e->getMessage(), 1);
+            }
         }
     }
 
@@ -256,13 +301,18 @@ class CreateContainer extends Command
         $this->line('6. create docker container');
 
         $path = config('tenants.path');
-        $user = 'client' . $tenant->id;
+        $user = $this->linuxUser;
         $tenantPath = sprintf('%s/%s', $path, $user);
 
         exec("cd $tenantPath && docker-compose up --no-start", $output, $result);
 
         if($result === false) {
             $this->error('error occurred');
+
+            if($this->inWeb()) {
+                // abort further execution
+                throw new \Exception("Error creating docker container, final step.", 1);
+            }
         } else {
             $this->info('done');
         }
