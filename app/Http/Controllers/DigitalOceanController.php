@@ -54,6 +54,16 @@ class DigitalOceanController extends Controller
 
             if($isSubdomain) {
                 $body = $this->client->getCnameRecord($appDomain, $domain);
+
+                $response = json_decode($body);
+
+                if($response->meta->total == 0) {
+                    return [
+                        'status' => 'error',
+                        'error_id' => 'not_found',
+                        'error_message' => 'CNAME record not found',
+                    ];
+                }
             } else {
                 $body = $this->client->getDomain($domain);
             }
