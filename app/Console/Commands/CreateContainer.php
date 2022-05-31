@@ -73,7 +73,7 @@ class CreateContainer extends Command
         if($result > 0) {
             $this->warn('error: ' . $result);
 
-            throw new \Exception("error", "Error creating new user `$newUser`");
+            throw new \Exception("Error creating new user `$newUser`", 1);
 
         } else {
             $this->info('done');
