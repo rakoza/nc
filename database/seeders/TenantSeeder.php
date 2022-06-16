@@ -26,6 +26,7 @@ class TenantSeeder extends Seeder
             'db_username' => 'tenant1',
             'db_password' => 'pass1',
             'redis_host' => config('tenants.redis_host'),
+            'word_to_pdf_worker' => config('tenants.word_to_pdf_worker'),
             'timezone' => config('tenants.timezone'),
         ]);
 
@@ -41,6 +42,7 @@ class TenantSeeder extends Seeder
             'db_username' => 'tenant2',
             'db_password' => 'pass2',
             'redis_host' => config('tenants.redis_host'),
+            'word_to_pdf_worker' => config('tenants.word_to_pdf_worker'),
             'timezone' => config('tenants.timezone'),
         ]);
 
@@ -56,6 +58,7 @@ class TenantSeeder extends Seeder
             'db_username' => 'tenant3',
             'db_password' => 'pass3',
             'redis_host' => config('tenants.redis_host'),
+            'word_to_pdf_worker' => config('tenants.word_to_pdf_worker'),
             'timezone' => config('tenants.timezone'),
         ]);
     }

@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('db_password');
 
             $table->string('redis_host');
+            $table->string('word_to_pdf_worker');
 
             $table->string('timezone');
 

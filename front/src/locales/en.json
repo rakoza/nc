@@ -69,6 +69,7 @@
     "server": "Server",
     "database_server": "Database server",
     "caching_server": "Caching server",
+    "print_server": "Print server",
     "timezone": "Timezone",
     "version": "Version",
     "docker_container": "Docker container",

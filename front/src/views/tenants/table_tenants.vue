@@ -25,6 +25,7 @@
                         <th>{{ $t('notes') }}</th>
                         <th class="has-text-right">{{ $t('status') }}</th>
                         <th class="has-text-right">{{ $t('trial_period_end_date') }}</th>
+                        <th class="has-text-right">{{ $t('version') }}</th>
                         <th style="width: 90px;" class="has-text-right">{{ $t('is_active') }}</th>
                         <th style="width: 150px;"></th>
                     </thead>
@@ -47,6 +48,7 @@
                             <td class="has-text-right">
                                 {{ item.trial_period_end_date | dd_mm_yyyy }}
                             </td>
+                            <td class="has-text-right">{{ item.src }}</td>
                             <td class="has-text-right"
                                 :class="{'has-text-danger has-text-weight-bold': !item.is_active}"
                                 >

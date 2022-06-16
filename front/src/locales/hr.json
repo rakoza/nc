@@ -69,6 +69,7 @@
     "server": "Poslužitelj",
     "database_server": "Poslužitelj baze podataka",
     "caching_server": "Caching server",
+    "print_server": "Print server",
     "timezone": "Vremenska zona",
     "version": "Verzija",
     "docker_container": "Docker container",

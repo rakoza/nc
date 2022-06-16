@@ -26,6 +26,7 @@ class Tenant extends Model
         'db_username',
         'db_password',
         'redis_host',
+        'word_to_pdf_worker',
         'timezone',
         // 'user_uid',
         // 'user_gid',

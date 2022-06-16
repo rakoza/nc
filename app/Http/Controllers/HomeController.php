@@ -29,6 +29,7 @@ class HomeController extends Controller
             'config' => [
                 'db_host' => config('tenants.db_host'),
                 'redis_host' => config('tenants.redis_host'),
+                'word_to_pdf_worker' => config('tenants.word_to_pdf_worker'),
                 'timezone' => config('tenants.timezone'),
                 'domain' => config('digitalocean.app_domain'),
                 'versions' => $this->getVersions(),

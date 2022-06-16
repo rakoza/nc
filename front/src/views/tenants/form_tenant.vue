@@ -61,8 +61,8 @@
                                     name="domain"
                                     :placeholder="$t('domain')">
                                 </b-input>
-                                <p class="has-background-light is-flex is-align-items-center" v-if="isSubdomain">
-                                    <span class="is-static mx-3 has-text-weight-bold">.{{ config.domain }}</span>
+                                <p class="control has-background-light is-flex is-align-items-center">
+                                    <span class="is-static px-3 has-text-weight-bold" v-if="isSubdomain">.{{ config.domain }}</span>
                                 </p>
                             </b-field>
 
@@ -104,43 +104,50 @@
                         </div>
 
                         <div class="column">
-                            <!-- db_host -->
-                            <b-field
-                                class="required"
-                                :label="$t('database_server')"
-                                :type="form.hasError('db_host')"
-                                :message="form.errorMessage('db_host')">
-                                <b-input
-                                    v-model="form.db_host"
-                                    name="db_host"
-                                    :placeholder="$t('database_server')">
-                                </b-input>
-                            </b-field>
+                            <b-field grouped>
+                                <!-- db_host -->
+                                <b-field
+                                    class="required"
+                                    :label="$t('database_server')"
+                                    :type="form.hasError('db_host')"
+                                    :message="form.errorMessage('db_host')">
+                                    <b-input
+                                        icon="database"
+                                        v-model="form.db_host"
+                                        name="db_host"
+                                        :placeholder="$t('database_server')">
+                                    </b-input>
+                                </b-field>
 
-                            <!-- db_username -->
-                            <b-field
-                                class="required"
-                                :label="$t('username')"
-                                :type="form.hasError('db_username')"
-                                :message="form.errorMessage('db_username')">
-                                <b-input
-                                    v-model="form.db_username"
-                                    name="db_username"
-                                    :placeholder="$t('username')">
-                                </b-input>
-                            </b-field>
+                                <!-- db_username -->
+                                <b-field
+                                    expanded
+                                    class="required"
+                                    :label="$t('username')"
+                                    :type="form.hasError('db_username')"
+                                    :message="form.errorMessage('db_username')">
+                                    <b-input
+                                        icon="user"
+                                        v-model="form.db_username"
+                                        name="db_username"
+                                        :placeholder="$t('username')">
+                                    </b-input>
+                                </b-field>
 
-                            <!-- db_password -->
-                            <b-field
-                                class="required"
-                                :label="$t('password')"
-                                :type="form.hasError('db_password')"
-                                :message="form.errorMessage('db_password')">
-                                <b-input
-                                    v-model="form.db_password"
-                                    name="db_password"
-                                    :placeholder="$t('password')">
-                                </b-input>
+                                <!-- db_password -->
+                                <b-field
+                                    expanded
+                                    class="required"
+                                    :label="$t('password')"
+                                    :type="form.hasError('db_password')"
+                                    :message="form.errorMessage('db_password')">
+                                    <b-input
+                                        icon="key"
+                                        v-model="form.db_password"
+                                        name="db_password"
+                                        :placeholder="$t('password')">
+                                    </b-input>
+                                </b-field>
                             </b-field>
 
                             <!-- redis_host -->
@@ -150,9 +157,24 @@
                                 :type="form.hasError('redis_host')"
                                 :message="form.errorMessage('redis_host')">
                                 <b-input
+                                    icon="memory"
                                     v-model="form.redis_host"
                                     name="redis_host"
                                     :placeholder="$t('caching_server')">
+                                </b-input>
+                            </b-field>
+
+                            <!-- word_to_pdf_worker -->
+                            <b-field
+                                class="required"
+                                :label="$t('print_server')"
+                                :type="form.hasError('word_to_pdf_worker')"
+                                :message="form.errorMessage('word_to_pdf_worker')">
+                                <b-input
+                                    icon="print"
+                                    v-model="form.word_to_pdf_worker"
+                                    name="word_to_pdf_worker"
+                                    :placeholder="$t('print_server')">
                                 </b-input>
                             </b-field>
 
@@ -229,7 +251,7 @@ export default {
     props: [],
 
     data() {
-        const {db_host, timezone, redis_host} = this.$store.getters['auth/config']
+        const {db_host, timezone, redis_host, word_to_pdf_worker} = this.$store.getters['auth/config']
 
         const randomString = () => { // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
           return Math.random().toString(36).slice(2)
@@ -244,6 +266,7 @@ export default {
             db_password: randomString(),
             db_host,
             redis_host,
+            word_to_pdf_worker,
             timezone,
             is_active: 1,
             trial_period_end_date: null,
@@ -312,6 +335,7 @@ export default {
                         'db_username',
                         'db_password',
                         'redis_host',
+                        'word_to_pdf_worker',
                         'timezone',
                         'src',
                     ]);
@@ -342,6 +366,8 @@ export default {
             const url = this.formMode === 'create'
                 ? '/tenants'
                 : '/tenants/' + this.$route.query.id
+
+            this.form.domain = this.domain
 
             if(this.isSubdomain) {
                 this.form.domain = this.domain + '.' + this.config.domain

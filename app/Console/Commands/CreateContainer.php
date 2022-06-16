@@ -242,6 +242,8 @@ class CreateContainer extends Command
             '{DB_USERNAME}',
             '{DB_PASSWORD}',
             '{REDIS_HOST}',
+            '{WORD_TO_PDF_SERVER}',
+            '{WORD_TO_PDF_SERVER_PORT}',
         ];
 
         $replace = [
@@ -255,6 +257,8 @@ class CreateContainer extends Command
             $tenant->db_username,
             $tenant->db_password,
             $tenant->redis_host,
+            $tenant->word_to_pdf_worker ?? 'host.docker.internal',
+            $tenant->word_to_pdf_worker_port ?? '5555',
         ];
 
         $originEnv = file_get_contents($envPath);

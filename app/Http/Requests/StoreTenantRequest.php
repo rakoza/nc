@@ -51,6 +51,7 @@ class StoreTenantRequest extends FormRequest
             ],
             'db_password' => 'required|string',
             'redis_host' => 'required|string',
+            'word_to_pdf_worker' => 'required|string',
             'timezone' => 'required|string',
             // 'user_uid' => 'nullable|integer|min:1000',
             // 'user_gid' => 'nullable|integer|min:1000',
