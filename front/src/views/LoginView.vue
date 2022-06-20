@@ -19,7 +19,7 @@
                             ref="email"
                             size="is-medium"
                             v-model="email"
-                            @keyup.enter="submitForm"
+                            @keyup.enter.native="submitForm"
                             maxlength="50">
                         </b-input>
                     </b-field>
@@ -32,7 +32,7 @@
                             size="is-medium"
                             password-reveal
                             v-model="password"
-                            @keyup.enter="submitForm">
+                            @keyup.enter.native="submitForm">
                         </b-input>
                     </b-field>
 
@@ -41,13 +41,14 @@
                         class="mt-5"
                         size="is-medium"
                         type="is-primary"
-                        @click="submitForm">
+                        @click="submitForm"
+                        :loading="isLoggingIn">
                         Submit
                     </b-button>
                 </div>
 
                 <!-- illustration -->
-                <div class="column is-flex is-justify-content-center is-align-items-center p-6 is-hidden-mobile">
+                <div class="column is-two-thirds is-flex is-justify-content-center is-align-items-center p-6 is-hidden-touch">
                     <img src="../assets/login.svg" alt="login">
                 </div>
             </div>

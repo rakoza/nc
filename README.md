@@ -1,327 +1,285 @@
-## Laravel 9 + Vue CLI 5 + Authentication
-Example config your Laravel project
 
-## Steps for Scaffolding From Scratch
-1. Create Laravel Project
+# 1. Droplet za mysql bazu i redis
 
-   ``` sh
-   laravel new my-project
-   cd my-project
-   # remove existing frontend scaffold
-   rm -rf package.json webpack.mix.js resources/js resources/css
-   ```
+> Na droplet se spajam `root` korisnikom sa javnim kljucem
 
-2. Create a Vue CLI 5 project
-   ``` sh
-   vue create front
-   cd front
-   ```
+## Dodajmo admin korisnika
+```
+adduser rakoza
+adduser rakoza sudo
+```
+SSH public key predajem administratoru
+```
+mv /root/.ssh/ /home/rakoza/
+chown -R rakoza.rakoza /home/rakoza/.ssh
+```
+Ne dozvoljavamo `root` korisniku logovanje preko ssh
+```
+vi /etc/ssh/sshd_config
+PermitRootLogin no
+systemctl restart sshd
+```
 
-3. Configure Vue CLI 5 project
+## Azuriramo Ubuntu
+`sudo apt update && sudo apt -y upgrade`
 
-    Edit `/front/vue.config.js`:
-    ``` js
-    const { defineConfig } = require('@vue/cli-service')
-    module.exports = defineConfig({
-        transpileDependencies: true,
+## Instaliramo mysql 5.7
+> follow instructions https://www.vultr.com/docs/how-to-install-mysql-5-7-on-ubuntu-20-04/
 
-        devServer: {
-            host: 'nc.local',
-            // When devServer.proxy is set to a string, only XHR requests will be proxied.
-            // proxy: 'http://nc.local',
-            // @see: https://github.com/starkovsky/laravel-vue-cli
-            proxy: {
-                '/spa': {
-                    target: 'http://nc.local',
-                },
-                // staticki asseti su u public/static
-                // logo, images i slicne stvari
-                '/static': {
-                    target: 'http://nc.local',
-                }
-            },
-        },
+## Instaliramo netstat
+`sudo apt install net-tools`
 
-        lintOnSave: process.env.NODE_ENV !== 'production',
-        productionSourceMap: false,
-        css: {
-            sourceMap: false
-        },
+## Bindujemo database servis na privatnu mrezu
+`sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf`
 
-        // output built static files to Laravel's public dir.
-        // note the "build" script in package.json needs to be modified as well.
-        outputDir: '../public/assets',
+```
+bind-address        = 10.133.0.4
+mysqlx-bind-address = 10.133.0.4
+```
 
-        publicPath: process.env.NODE_ENV === 'production'
-            ? '/assets/'
-            : '/',
+`systemctl restart mysql`
 
-        // modify the location of the generated HTML file.
-        // Specify the output path for the generated index.html (relative to outputDir). Can also be an absolute path.
-        indexPath: process.env.NODE_ENV === 'production'
-            ? '../../resources/views/index.blade.php'
-            : 'index.html'
-    })
-    ```
+```
+sudo -uroot mysql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password by 'secure_password';
+mysql_secure_installation
+```
 
-    Edit `/resources/frontend/app/package.json`:
-    ``` diff
-    "scripts": {
-      "serve": "vue-cli-service serve",
-    - "build": "vue-cli-service build",
-    + "build": "rm -rf ../../../public/assets/app/{js,css,img} && vue-cli-service build --no-clean",
-      "lint": "vue-cli-service lint"
-    },
-    ```
+## Kreiramo mysql bazu i korisnika za nopusPro aplikaciju
+`sudo mysql -uroot -p mysql`
 
-4. Configure Laravel routes for SPA.
+```
+CREATE DATABASE nopus_pro;
+CREATE USER IF NOT EXISTS 'nopusproapp'@'10.133.0.0/255.255.0.0' IDENTIFIED BY 'nopus.pro.67';
+GRANT ALL ON *.* TO 'nopusproapp'@'10.133.0.0/255.255.0.0' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+```
 
-    **routes/web.php**
+> Napomena: Ovo nece valjati
+> `GRANT CREATE,CREATE USER,GRANT OPTION ON *.* TO 'nopusproapp'@'10.133.0.0/255.255.0.0';`
+> Mysql user treba kreirati mysql bazu i korisnika za tenanta i potom sve privilegije dati tenant user-u na njegovoj bazi, a to ne moze uraditi ako i sam nema sve privilegije na tenant bazi.
 
-    ``` php
-    Route::get('/', [HomeController::class, 'index']);
+## Instaliramo redis
+`sudo apt install redis-server`
 
-    // na produkciji moramo odgovoriti na refresh + /assets
-    // tj povesti korisnika na spa index page
-    Route::any('/{any}', [HomeController::class, 'index'])->where('any', '^(?!spa).*$');
-    ```
+## Bindujemo Redis na privatnu adresu
+`sudo vi /etc/redis/redis.conf`
 
-    **app/Http/Controllers/FrontendController.php**
+Dodamo u konfiguraciju
+`bind 10.133.0.4 127.0.0.1 ::1`
 
-    ``` php
-    <?php
-    namespace App\Http\Controllers;
-    use Illuminate\Http\Request;
+I restartujemo redis
+`sudo systemctl restart redis`
 
-    class HomeController extends Controller
-    {
 
-        /**
-         * Index page
-         *
-         * @return \Illuminate\Http\Response
-         */
-        public function index()
-        {
-            return view('index');
-        }
+# 2. Droplet za aplikaciju i docker
 
-    }
-    ```
+> Na droplet se spajam `root` korisnikom sa javnim kljucem
 
-5. Add vue router, vuex and axios
-    ``` js
-    vue add router
-    vue add vuex
-    npm install axios --save
-    ```
+## Dodajmo admin korisnika
+```
+adduser rakoza
+adduser rakoza sudo
+```
+SSH public key predajem administratoru
+```
+mv /root/.ssh/ /home/rakoza/
+chown -R rakoza.rakoza /home/rakoza/.ssh
+```
+Ne dozvoljavamo `root` korisniku logovanje preko ssh
+```
+vi /etc/ssh/sshd_config
+PermitRootLogin no
+systemctl restart sshd
+```
 
-6. Add authentication routes to backend:
+## Dodajmo admin korisniku posebne prvilegije za Linux komande `adduser` i `chown`
 
-    routes/web.php
-    ``` php
-    // Routes for SPA API calls
-    Route::prefix('spa')->group(function () {
+`sudo vi /etc/sudoers.d/rakoza`
 
-        Route::post('login', [LoginController::class, 'login']);
-        Route::post('logout', [LoginController::class, 'logout']);
-        Route::get('csrf-cookie', [CsrfCookieController::class, 'show']);
+Add line: `rakoza       ALL = NOPASSWD: /usr/sbin/useradd, /usr/bin/chown`
+> Poslije rakoza ide tab, a ne space. Bez ovoga, konzolna komanda za kreiranje docker container-a nece se izvrsiti, jer sadrzi poziv `sudo` komande koji ocekuje unos admin lozinke.
 
-        /**
-         * Stranice dozvoljene za pristup samo autorizovanim korisnicima
-         */
-        Route::group(['middleware' => 'auth'], function () {
-            Route::get('check', [HomeController::class, 'check']);
+## Azuriramo Ubuntu
+`sudo apt update && sudo apt -y upgrade`
 
-            require __DIR__.'/spa.php';
-        });
-    });
-    ```
+## Instaliramo netstat
+`sudo apt install net-tools`
 
-    LoginController.php
-    ``` php
-    <?php
+## Instaliramo apache2 i php8
 
-    namespace App\Http\Controllers;
+https://computingforgeeks.com/how-to-install-php-on-ubuntu-linux-system/
 
-    use Illuminate\Http\JsonResponse;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Auth;
-    use Illuminate\Validation\ValidationException;
+```
+sudo apt update && sudo apt -y upgrade
+sudo apt update
+sudo apt install -y apache2
+sudo apt install lsb-release ca-certificates apt-transport-https software-properties-common -y
+sudo add-apt-repository ppa:ondrej/php
+sudo apt update
+sudo apt install php8.1
+php --version
+```
 
-    class LoginController extends Controller
-    {
-        /**
-         * Handle an authentication attempt.
-         *
-         * @param  \Illuminate\Http\Request  $request
-         * @return \Illuminate\Http\Response
-         */
-        public function login(Request $request)
-        {
-            $credentials = $request->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required'],
-            ]);
+## Instalacija extenzija
 
-            if (Auth::attempt($credentials)) {
-                $request->session()->regenerate();
+> Primjer: `sudo apt install php8.1-<extension>`
+```
+sudo apt install php8.1-{bcmath,xml,fpm,mysql,zip,intl,ldap,gd,cli,bz2,curl,mbstring,pgsql,opcache,soap,cgi}
+```
 
-                // status 200 confirms credentials validity
-                return new JsonResponse([], 200);
-            }
+## Podesavamo apache nalog
 
-            throw ValidationException::withMessages([
-                'email' => [trans('auth.failed')],
-            ]);
-        }
+> Podesavamo apache da se izvrsava pod admin nalogom zato sto ce morati izvrsavati neke admin komande, laravel console commands
 
-        /**
-         * Log the user out of the application.
-         *
-         * @param  \Illuminate\Http\Request  $request
-         * @return \Illuminate\Http\Response
-         */
-        public function logout(Request $request)
-        {
-            Auth::logout();
+`sudo vi /etc/apache2/envvars`
+```
+#export APACHE_RUN_USER=www-data
+#export APACHE_RUN_GROUP=www-data
+export APACHE_RUN_USER=rakoza
+export APACHE_RUN_GROUP=rakoza
+```
+`sudo chown -R rakoza.rakoza /var/www`
 
-            $request->session()->invalidate();
+## Omoguci mod_rewrite modul
+`sudo a2enmod rewrite`
 
-            $request->session()->regenerateToken();
+## Install php composer
+```
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+```
+`sudo mv composer.phar /usr/local/bin/composer`
 
-            // status 200 confirms credentials validity
-            return new JsonResponse([], 200);
-        }
-    }
-    ```
+## Install git
+Git dolazi preinstaliran na Ubuntu dropletu
 
-    CsrfCookieController.php
-    ``` php
-    <?php
+## Generisi par ssh kljuceva za GitHub
+```
+ssh-keygen -t ed25519 -C "predrag.rakonjac@gmail.com"
+ssh-add ~/.ssh/id_ed25519
+```
 
-    namespace App\Http\Controllers;
+## Kopiraj pub key u GitHub deply keys i kloniraj repozitorij
+```
+cat ~/.ssh/id_ed25519.pub
+git clone https://github.com/rakoza/nc.git
+```
 
-    use Illuminate\Http\JsonResponse;
-    use Illuminate\Http\Request;
-    use Illuminate\Http\Response;
+## Instaliraj Laravel biblioteke
+```
+mv ./nc ./nopus.pro
+cd nopus.pro
+composer install
+cp ./.env.example ./.env
+php artisan key:generate
+```
 
-    class CsrfCookieController
-    {
-        /**
-         * Return an empty response simply to trigger the storage of the CSRF cookie in the browser.
-         *
-         * @param  \Illuminate\Http\Request  $request
-         * @return \Illuminate\Http\Response
-         */
-        public function show(Request $request)
-        {
-            if ($request->expectsJson()) {
-                return new JsonResponse(null, 204);
-            }
+Azuriraj .env konfiguracionim podacima
 
-            return new Response('', 204);
-        }
-    }
-    ```
+## Podesimo apache da slusa na portu 8888
 
-    HomeController.php `check()` method
-    ``` php
-    /**
-     * Check if the user is authenticated
-     *
-     * @return null
-     */
-    public function check()
-    {
-        return 'cool';
-    }
-    ```
+> Zakomentarisemo port 80 jer ce smetati nginx-proxy docker instanci
 
-7. Add authentication to frontend:
+`sudo vi /etc/apache2/ports.conf`
+`Listen 8888`
 
-    main.js
-    ``` js
-    import Vue from 'vue'
-    import App from './App.vue'
-    import router from './router'
-    import store from './store'
-    import axios from 'axios'
+## Dodajemo virtual host
+`sudo vi /etc/apache2/sites-available/nopus.pro.conf`
+```
+<VirtualHost *:8888>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        ServerName nopus.pro
+        ServerAlias www.nopus.pro
 
-    Vue.config.productionTip = false
+        ServerAdmin predrag.rakonjac@gmail.com
 
-    axios.defaults.withCredentials = true
+        DocumentRoot /var/www/nopus.pro/public
 
-    store.dispatch('auth/me').then(() => {
-        new Vue({
-            store,
-            router,
-            render: h => h(App)
-        }).$mount('#app')
-    })
-    ```
+        # In Apache 2.4, Order Allow,Deny has been replaced by Require all granted.
+        <Directory /var/www/nopus.pro/public>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Require all granted
+        </Directory>
 
-    store/auth.js
-    ``` js
-    import axios from 'axios'
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
 
-    export default {
-        namespaced: true,
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-        state: {
-            authenticated: false,
-            // user: null
-        },
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+</VirtualHost>
+```
 
-        getters: {
-            authenticated (state) {
-                return state.authenticated
-            },
+## Aktiviramo virtual host
+`sudo a2ensite nopus.pro`
 
-            // user (state) {
-            //     return state.user
-            // },
-        },
+## Pokrenemo migracije i seeder-e
+`php artisan migrate --seed`
 
-        mutations: {
-            SET_AUTHENTICATED (state, value) {
-                state.authenticated = value
-            },
+# Pripremamo okruzenje za docker
+```
+cd /mnt/volume_ams3_02
+sudo git clone https://github.com/rakoza/docker-laravel.git
+sudo chown -R rakoza.rakoza ./docker-laravel
+```
 
-            // SET_USER (state, value) {
-            //     state.user = value
-            // }
-        },
+## Dodamo putanju u Laravel .env file
+`/mnt/volume_ams3_02/docker-laravel`
 
-        actions: {
-            async signIn ({ dispatch }, credentials) {
-                await axios.get('/spa/csrf-cookie')
-                await axios.post('/spa/login', credentials)
+## Dodamo aplikaciju u docker-laravel/apps direktorijum
+```
+cd /mnt/volume_ams3_02/docker-laravel
+mkdir apps
+cd apps
+git clone git@bitbucket.org:mirko_igumnovic/hr.git
+composer install --ignore-platform-reqs
+```
 
-                return dispatch('me')
-            },
+## Instaliramo docker servis
+https://docs.docker.com/engine/install/ubuntu/#install-using-the-convenience-script
+```
+cd ~
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo apt-get install docker-compose
+```
 
-            async signOut ({ dispatch }) {
-                await axios.post('/spa/logout')
+## To run the Docker daemon as a fully privileged service
+https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
 
-                return dispatch('me')
-            },
+## Pull nginx-proxy:alpine
+```
+docker pull nginxproxy/nginx-proxy:alpine
+docker network create nginx-proxy-net
+cd /mnt/volume_ams3_02/docker-laravel/nginx-proxy
+docker-compose up
+```
 
-            me ({ commit }) {
-                return axios.get('/spa/check').then((response) => {
-                    commit('SET_AUTHENTICATED', true)
-                    // commit('SET_USER', response.data)
-                }).catch(() => {
-                    commit('SET_AUTHENTICATED', false)
-                    // commit('SET_USER', null)
-                })
-            }
-        }
-    }
-    ```
-
-8. Add init user to UserSeed and run databases migrations with seed flag:
-
-    ``` sh
-    php artisan migrate --seed
-    ```
+## Configure Docker to start on boot
+```
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
+```
