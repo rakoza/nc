@@ -99,7 +99,7 @@
                             {{ tenant.timezone }}
                         </b-field>
                         <!-- src -->
-                        <b-field :label="$t('version')">
+                        <b-field :label="$t('software_application')">
                             {{ tenant.src }}
                         </b-field>
                         <!-- trial_period_end_date -->

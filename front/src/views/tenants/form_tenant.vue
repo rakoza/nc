@@ -26,13 +26,13 @@
                             <!-- name -->
                             <b-field
                                 class="required"
-                                :label="$t('name2')"
+                                :label="$t('company')"
                                 :type="form.hasError('name')"
                                 :message="form.errorMessage('name')">
                                 <b-input
                                     v-model="form.name"
                                     name="name"
-                                    :placeholder="$t('name2')">
+                                    :placeholder="$t('company')">
                                 </b-input>
                             </b-field>
 
@@ -104,6 +104,41 @@
                         </div>
 
                         <div class="column">
+
+                            <!-- src -->
+                            <b-field
+                                class="required"
+                                :label="$t('software_application')"
+                                :type="form.hasError('src')"
+                                :message="form.errorMessage('src')">
+                                <b-select
+                                    expanded
+                                    name="src"
+                                    v-model="form.src">
+                                    <option v-for="item in config.versions" :key="item" :value="item">
+                                        {{ item }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+
+                            <!-- timezone -->
+                            <b-field
+                                class="required"
+                                :label="$t('timezone')"
+                                :type="form.hasError('timezone')"
+                                :message="form.errorMessage('timezone')">
+                                <b-select
+                                    expanded
+                                    icon="globe"
+                                    name="timezone"
+                                    v-model="form.timezone">
+                                    <option v-for="item in config.timezones" :key="item" :value="item">
+                                        {{ item }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+
+                            <!-- database -->
                             <b-field grouped>
                                 <!-- db_host -->
                                 <b-field
@@ -178,38 +213,6 @@
                                 </b-input>
                             </b-field>
 
-                            <!-- timezone -->
-                            <b-field
-                                class="required"
-                                :label="$t('timezone')"
-                                :type="form.hasError('timezone')"
-                                :message="form.errorMessage('timezone')">
-                                <b-select
-                                    expanded
-                                    name="timezone"
-                                    v-model="form.timezone">
-                                    <option v-for="item in config.timezones" :key="item" :value="item">
-                                        {{ item }}
-                                    </option>
-                                </b-select>
-                            </b-field>
-
-                            <!-- src -->
-                            <b-field
-                                class="required"
-                                :label="$t('version')"
-                                :type="form.hasError('src')"
-                                :message="form.errorMessage('src')">
-                                <b-select
-                                    expanded
-                                    name="src"
-                                    v-model="form.src">
-                                    <option v-for="item in config.versions" :key="item" :value="item">
-                                        {{ item }}
-                                    </option>
-                                </b-select>
-                            </b-field>
-
                             <!-- trial_period_end_date -->
                             <b-field
                                 :label="$t('trial_period_end_date')"
@@ -251,7 +254,7 @@ export default {
     props: [],
 
     data() {
-        const {db_host, timezone, redis_host, word_to_pdf_worker} = this.$store.getters['auth/config']
+        const {db_host, timezone, redis_host, versions, word_to_pdf_worker} = this.$store.getters['auth/config']
 
         const randomString = () => { // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
           return Math.random().toString(36).slice(2)
@@ -270,6 +273,7 @@ export default {
             timezone,
             is_active: 1,
             trial_period_end_date: null,
+            src: versions.length === 1 ? versions[0] : null,
         };
 
         const form = new this.$form(item)
@@ -310,8 +314,8 @@ export default {
         },
         domainLabel() {
             return this.theCustomersOwnDomain
-                ? "The customer's own Internet domain"
-                : "Application sub-domain"
+                ? this.$t('customers_internet_domain')
+                : this.$t('subdomain')
         },
         config() {
             return this.$store.getters['auth/config']

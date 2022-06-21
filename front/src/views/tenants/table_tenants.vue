@@ -18,21 +18,21 @@
             <div class="table-container">
                 <table class="table is-fullwidth is-hoverable">
                     <thead>
-                        <th style="width: 30px;"></th>
+                        <th class="has-text-right" style="width: 30px;">Id</th>
                         <th style="width: 200px;">{{ $t('domain') }}</th>
-                        <th style="width: 250px;">{{ $t('name') }}</th>
+                        <th style="width: 250px;">{{ $t('company') }}</th>
                         <th style="width: 250px;">{{ $t('email_address') }}</th>
                         <th>{{ $t('notes') }}</th>
                         <th class="has-text-right">{{ $t('status') }}</th>
                         <th class="has-text-right">{{ $t('trial_period_end_date') }}</th>
-                        <th class="has-text-right">{{ $t('version') }}</th>
+                        <th class="has-text-right">{{ $t('software_application') }}</th>
                         <th style="width: 90px;" class="has-text-right">{{ $t('is_active') }}</th>
                         <th style="width: 150px;"></th>
                     </thead>
 
                     <tbody>
                         <tr v-for="(item,index) in tenants" :key="index">
-                            <td>{{ index + 1 }}.</td>
+                            <td class="has-text-right">{{ item.id }}</td>
                             <td>
                                 <a :href="'http://' + item.domain" target="_blank">
                                     {{ item.domain }}

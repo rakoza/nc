@@ -115,7 +115,7 @@ class DockerController extends Controller
      */
     public function createContainer(Tenant $tenant)
     {
-        Artisan::call('nc:create-container', [
+        Artisan::call('nc:create-app', [
             'id' => $tenant->id
         ]);
     }

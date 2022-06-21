@@ -72,9 +72,13 @@
     "print_server": "Print server",
     "timezone": "Vremenska zona",
     "version": "Verzija",
+    "software_application": "Software aplikacija",
     "docker_container": "Docker container",
     "create_docker_container": "Napravite docker kontejner",
     "remove_docker_confirmation": "Potvrdite da želite ukloniti docker kontejner",
+    "customers_internet_domain" : "Vlastita internetska domena korisnika",
+    "subdomain": "Poddomena",
+    "company": "Tvrtka",
 
     "last": "Posljednji"
 }

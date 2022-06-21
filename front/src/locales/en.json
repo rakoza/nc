@@ -72,9 +72,13 @@
     "print_server": "Print server",
     "timezone": "Timezone",
     "version": "Version",
+    "software_application": "Software application",
     "docker_container": "Docker container",
     "create_docker_container": "Create docker container",
     "remove_docker_confirmation": "Confirm that you want to remove docker container",
+    "customers_internet_domain" : "The customer's own Internet domain",
+    "subdomain": "Subdomain",
+    "company": "Company",
 
     "last": "Last"
 }
