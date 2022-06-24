@@ -60,6 +60,16 @@ class CreateEnvFile extends Command
             '{REDIS_HOST}',
             '{WORD_TO_PDF_SERVER}',
             '{WORD_TO_PDF_SERVER_PORT}',
+            // for websockets
+            '{APP_NAME}',
+            '{PUSHER_APP_ID}',
+            '{PUSHER_APP_KEY}',
+            '{PUSHER_APP_SECRET}',
+            '{PUSHER_APP_CLUSTER}',
+            '{WS_HOST}',
+            '{WS_PORT}',
+            '{WS_ENCRYPTED}',
+            '{WS_SCHEME}',
         ];
 
         $replace = [
@@ -75,6 +85,15 @@ class CreateEnvFile extends Command
             $tenant->redis_host,
             $tenant->word_to_pdf_worker ?? 'host.docker.internal',
             $tenant->word_to_pdf_worker_port ?? '5555',
+            $tenant->domain,
+            $tenant->id,//PUSHER_APP_ID,
+            $tenant->domain,//PUSHER_APP_KEY,
+            md5($tenant->domain),//PUSHER_APP_SECRET,
+            'eu',//PUSHER_APP_CLUSTER,
+            'nopus.pro',//WS_HOST,
+            6001,//WS_PORT,
+            false,//WS_ENCRYPTED,
+            'http',//WS_SCHEME,
         ];
 
         $originEnv = file_get_contents($envSource);
