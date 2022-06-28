@@ -2,6 +2,7 @@
 
 namespace App\WebSockets;
 
+use BeyondCode\LaravelWebSockets\Apps\App;
 use BeyondCode\LaravelWebSockets\Apps\AppProvider;
 use Illuminate\Support\Collection;
 
@@ -13,8 +14,7 @@ class CustomAppProvider implements AppProvider
     public function __construct()
     {
         // $this->apps = collect(config('websockets.apps'));
-        $this->apps = \App\Models\Tenant::where('is_active', true)
-            ->get()
+        $this->apps = \App\Models\Tenant::where('is_active', true)->get()
             ->map(function($tenant) {
                 return [
                     'id' => $tenant->id,
