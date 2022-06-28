@@ -92,7 +92,7 @@ class CreateEnvFile extends Command
             'eu',//PUSHER_APP_CLUSTER,
             'nopus.pro',//WS_HOST,
             6001,//WS_PORT,
-            false,//WS_ENCRYPTED,
+            'false',//WS_ENCRYPTED,
             'http',//WS_SCHEME,
         ];
 
